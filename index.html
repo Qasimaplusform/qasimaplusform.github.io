@@ -269,36 +269,39 @@
 <script>
 
 const AGENTS = [
-  { name: "أحمد بن طويل", email: "a.bintawil@autobia.sa" },
-  { name: "يوسف باسبيت", email: "y.basubeit@autobia.sa" },
-  { name: "أحمد بافيل", email: "a.bafail@autobia.sa" },
-  { name: "عبدالرحمن علي", email: "a.ali@autobia.sa" },
-  { name: "حامد باهادي", email: "h.bahadi@autobia.sa" },
-  { name: "علي سعيد", email: "a.saeed@autobia.sa" },
-  { name: "أحمد علي", email: "ah.ali@autobia.sa" },
-  { name: "طارق كاملي", email: "t.kamili@autobia.sa" },
-  { name: "عبده فقيهي", email: "a.fageehi@autobia.sa" },
-  { name: "عبدالله عسيري", email: "a.asiri@autobia.sa" },
-  { name: "محمد حاكم", email: "m.rajab@autobia.sa" },
-  { name: "عمار سعيد", email: "a.karsh@autobia.sa" },
-  { name: "مصطفى العلي", email: "m.alali@autobia.sa" },
-  { name: "ثامر الخنبشي", email: "t.alkhanbashi@autobia.sa" },
-  { name: "عبدالله الهجرس", email: "a.alhijris@autobia.sa" },
-  { name: "عادل العمودي", email: "a.alamoudi@autobia.sa" },
-  { name: "عبدالعزيز رقيق", email: "a.arquiq@autobia.sa" },
-  { name: "وائل بن طالب", email: "w.bintalib@autobia.sa" },
-  { name: "وائل مثنى", email: "w.muthanna@autobia.sa" },
-  { name: "ياسر شيف", email: "y.shaif@autobia.sa" },
-  { name: "طارق الخنبشي", email: "ta.alkhanbashi@autobia.sa" },
-  { name: "راكان الزهراني", email: "r.alzahrani@autobia.sa" },
-  { name: "محمد باعيسى", email: "m.baessa@autobia.sa" },
-  { name: "باهر", email: "baher@autobia.sa" },
+  { code: "tawil",     name: "أحمد بن طويل",   email: "a.bintawil@qasimaplus.com" },
+  { code: "yousef",    name: "يوسف باسبيت",    email: "y.basubeit@qasimaplus.com" },
+  { code: "bafail",    name: "أحمد بافيل",     email: "a.bafail@qasimaplus.com" },
+  { code: "rahman",    name: "عبدالرحمن علي",  email: "a.ali@qasimaplus.com" },
+  { code: "hamed",     name: "حامد باهادي",    email: "h.bahadi@qasimaplus.com" },
+  { code: "saeed",     name: "علي سعيد",       email: "a.saeed@qasimaplus.com" },
+  { code: "ahali",     name: "أحمد علي",       email: "ah.ali@qasimaplus.com" },
+  { code: "kamili",    name: "طارق كاملي",     email: "t.kamili@qasimaplus.com" },
+  { code: "faqihi",    name: "عبده فقيهي",     email: "a.fageehi@qasimaplus.com" },
+  { code: "asiri",     name: "عبدالله عسيري",  email: "a.asiri@qasimaplus.com" },
+  { code: "hakim",     name: "محمد حاكم",      email: "m.rajab@qasimaplus.com" },
+  { code: "ammar",     name: "عمار سعيد",      email: "a.karsh@qasimaplus.com" },
+  { code: "mustafa",   name: "مصطفى العلي",    email: "m.alali@qasimaplus.com" },
+  { code: "thamer",    name: "ثامر الخنبشي",   email: "t.alkhanbashi@qasimaplus.com" },
+  { code: "hijris",    name: "عبدالله الهجرس", email: "a.alhijris@qasimaplus.com" },
+  { code: "adel",      name: "عادل العمودي",   email: "a.alamoudi@qasimaplus.com" },
+  { code: "aziz",      name: "عبدالعزيز رقيق", email: "a.arquiq@qasimaplus.com" },
+  { code: "wael",      name: "وائل بن طالب",   email: "w.bintalib@qasimaplus.com" },
+  { code: "muthanna",  name: "وائل مثنى",      email: "w.muthanna@qasimaplus.com" },
+  { code: "yasir",     name: "ياسر شيف",       email: "y.shaif@qasimaplus.com" },
+  { code: "khanbashi", name: "طارق الخنبشي",   email: "ta.alkhanbashi@qasimaplus.com" },
+  { code: "rakan",     name: "راكان الزهراني", email: "r.alzahrani@qasimaplus.com" },
+  { code: "baessa",    name: "محمد باعيسى",    email: "m.baessa@qasimaplus.com" },
+  { code: "baher",     name: "باهر",           email: "baher@qasimaplus.com" },
 ];
 
-// Set agent from URL param (hidden from user)
-const agentParam = new URLSearchParams(location.search).get('agent');
-if (agentParam) {
-  const agent = AGENTS.find(a => a.email === agentParam || a.name === agentParam);
+// Set agent from URL param (?a=01 short code, or ?agent=email — both supported)
+const params = new URLSearchParams(location.search);
+const codeParam = params.get('a');
+const agentParam = params.get('agent');
+if (codeParam || agentParam) {
+  const agent = AGENTS.find(a =>
+    a.code === codeParam || a.email === agentParam || a.name === agentParam);
   if (agent) {
     document.getElementById('f-agent-name').value = agent.name;
     document.getElementById('f-agent-email').value = agent.email;
