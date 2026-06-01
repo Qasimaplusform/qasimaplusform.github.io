@@ -473,20 +473,19 @@ async function submitForm() {
       files
     };
 
-    const res = await fetch(ENDPOINT, { method: 'POST', body: JSON.stringify(payload) });
-    const data = await res.json().catch(() => ({ ok: false }));
+    // Apps Script لا يدعم CORS، فنرسل بوضع no-cors (الرد لا يُقرأ، لكن البيانات تُحفظ)
+    await fetch(ENDPOINT, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
 
-    if (data.ok) {
-      loading.style.display = 'none';
-      document.getElementById('main-form').style.display = 'none';
-      document.getElementById('success-box').style.display = 'block';
-      document.getElementById('progress-bar').style.width = '100%';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } else {
-      let detail = '';
-      if (data.errors) detail = Object.values(data.errors).join('\n');
-      throw new Error(detail || data.message || 'فشل الإرسال');
-    }
+    loading.style.display = 'none';
+    document.getElementById('main-form').style.display = 'none';
+    document.getElementById('success-box').style.display = 'block';
+    document.getElementById('progress-bar').style.width = '100%';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   } catch (e) {
     loading.style.display = 'none';
     btn.style.display = 'flex'; btn.disabled = false;
