@@ -412,50 +412,85 @@ async function compressImage(file) {
   });
 }
 
+// ====== نظام قسيمة بلس (Google Apps Script) ======
+const ENDPOINT = 'https://script.google.com/macros/s/AKfycbyLL5m5fJGIxxNZlrvJepYfWdhL8iCX_b2N0pAhWzb_chPo5jwKINP0cLvLMDaUVba2/exec';
+const SECRET = 'qplus2026';
+
+// تحويل ملف إلى base64 (بدون الترويسة)
+function fileToB64(file) {
+  return new Promise((resolve) => {
+    const r = new FileReader();
+    r.onload = () => resolve(String(r.result).split(',')[1]);
+    r.onerror = () => resolve('');
+    r.readAsDataURL(file);
+  });
+}
+
 async function submitForm() {
   if (!allValid()) {
     highlightErrors();
     alert('يرجى إكمال جميع الحقول بشكل صحيح ورفع جميع المستندات المطلوبة');
     return;
   }
+  const agentEmail = document.getElementById('f-agent-email').value;
+  if (!agentEmail) {
+    alert('رابط غير صالح — يرجى استخدام الرابط الخاص بالمندوب المسؤول.');
+    return;
+  }
+
   const btn = document.getElementById('send-btn');
   const loading = document.getElementById('loading-indicator');
   btn.disabled = true; btn.style.display = 'none';
   loading.style.display = 'flex';
-  const rawForm = document.getElementById('main-form');
-  const formData = new FormData();
-  // Add CC to agent email
-  const agentEmail = document.getElementById('f-agent-email').value;
-  if (agentEmail) formData.append('_cc', agentEmail);
-  for (const [key, val] of new FormData(rawForm).entries()) {
-    if (val instanceof File && val.size > 0) {
-      const compressed = await compressImage(val);
-      formData.append(key, compressed);
-    } else {
-      formData.append(key, val);
-    }
-  }
+
   try {
-    const res = await fetch('https://formspree.io/f/xvzynvae', {
-      method: 'POST', body: formData, headers: { 'Accept': 'application/json' }
-    });
-    const data = await res.json().catch(() => ({}));
-    // Consider success if ok OR if formspree returned submission id
-    if (res.ok || data.id || data.next) {
+    // ضغط + ترميز الصور الأربع
+    const fileMap = {
+      commercialRegisterFile: 'up-cr',
+      nationalAddressFile:    'up-addr',
+      ibanFile:               'up-iban',
+      shopImageFile:          'up-shop'
+    };
+    const files = [];
+    for (const field in fileMap) {
+      const input = document.getElementById(fileMap[field]);
+      if (input.files && input.files[0]) {
+        const compressed = await compressImage(input.files[0]);
+        const b64 = await fileToB64(compressed);
+        files.push({ field, name: compressed.name, type: compressed.type || 'image/jpeg', b64 });
+      }
+    }
+
+    const payload = {
+      key: SECRET,
+      agentName:  document.getElementById('f-agent-name').value,
+      agentEmail: agentEmail,
+      commercialRegister: document.getElementById('f-cr').value,
+      taxNumber:  document.getElementById('f-vat').value,
+      mapUrl:     document.getElementById('f-loc').value,
+      ownerPhone: document.getElementById('f-owner').value,
+      repPhone:   document.getElementById('f-rep').value,
+      files
+    };
+
+    const res = await fetch(ENDPOINT, { method: 'POST', body: JSON.stringify(payload) });
+    const data = await res.json().catch(() => ({ ok: false }));
+
+    if (data.ok) {
       loading.style.display = 'none';
       document.getElementById('main-form').style.display = 'none';
       document.getElementById('success-box').style.display = 'block';
       document.getElementById('progress-bar').style.width = '100%';
-      window.scrollTo({top:0,behavior:'smooth'});
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
-      throw new Error(data.error || 'فشل الإرسال');
+      let detail = '';
+      if (data.errors) detail = Object.values(data.errors).join('\n');
+      throw new Error(detail || data.message || 'فشل الإرسال');
     }
-  } catch(e) {
-    // If success box already shown, ignore the error
-    if (document.getElementById('success-box').style.display === 'block') return;
+  } catch (e) {
     loading.style.display = 'none';
     btn.style.display = 'flex'; btn.disabled = false;
-    alert('حدث خطأ أثناء الإرسال، يرجى المحاولة مرة أخرى');
+    alert(e.message || 'حدث خطأ أثناء الإرسال، يرجى المحاولة مرة أخرى');
   }
 }
 </script>
