@@ -306,6 +306,15 @@ if (codeParam || agentParam) {
     document.getElementById('f-agent-name').value = agent.name;
     document.getElementById('f-agent-email').value = agent.email;
     document.getElementById('f-subject').value = 'طلب انضمام جديد — ' + agent.name + ' | قسيمة بلس';
+    // تسجيل زيارة لهذا الرابط (مرة واحدة لكل جلسة) عبر beacon صورة — لا يتأثر بـ CORS
+    try {
+      var visitKey = 'qv_' + agent.code;
+      if (!sessionStorage.getItem(visitKey)) {
+        sessionStorage.setItem(visitKey, '1');
+        var beacon = new Image();
+        beacon.src = 'https://script.google.com/macros/s/AKfycbyLL5m5fJGIxxNZlrvJepYfWdhL8iCX_b2N0pAhWzb_chPo5jwKINP0cLvLMDaUVba2/exec?visit=' + encodeURIComponent(agent.code) + '&t=' + Date.now();
+      }
+    } catch (e) {}
   }
 }
 
