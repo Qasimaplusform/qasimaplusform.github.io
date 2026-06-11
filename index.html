@@ -128,22 +128,15 @@
         <h2>بيانات المحل</h2>
       </div>
       <div class="field">
-        <label><span class="req">*</span> رقم السجل التجاري</label>
+        <label><span class="req">*</span> الحالة الضريبية</label>
         <div class="input-wrap">
-          <input type="text" name="السجل التجاري" id="f-cr" placeholder="7XXXXXXXXX" maxlength="10" inputmode="numeric" oninput="validateCR(this)">
-          <span class="status-icon" id="ic-cr"></span>
+          <select id="f-vat-status" onchange="onVatStatusChange()" style="width:100%;padding:13px;border:1px solid #d7dcec;border-radius:12px;font-family:inherit;font-size:15px;background:#fff;color:#1a1a2e">
+            <option value="">— اختر —</option>
+            <option value="معفي">معفي من الضريبة</option>
+            <option value="يوجد ضريبة">يوجد ضريبة</option>
+          </select>
         </div>
-        <div class="hint">10 أرقام تبدأ بـ 7</div>
-        <div class="err-msg" id="err-cr">يجب أن يكون 10 أرقام ويبدأ بـ 7</div>
-      </div>
-      <div class="field">
-        <label><span class="req">*</span> الرقم الضريبي (VAT)</label>
-        <div class="input-wrap">
-          <input type="text" name="الرقم الضريبي" id="f-vat" placeholder="3XXXXXXXXXXXXXX" maxlength="15" inputmode="numeric" oninput="validateVAT(this)">
-          <span class="status-icon" id="ic-vat"></span>
-        </div>
-        <div class="hint">15 رقماً تبدأ بـ 3</div>
-        <div class="err-msg" id="err-vat">يجب أن يكون 15 رقماً ويبدأ بـ 3</div>
+        <div class="hint">إذا كان لديك ضريبة، سنطلب صورة الشهادة الضريبية</div>
       </div>
       <div class="field">
         <label><span class="req">*</span> رابط موقع المحل على الخريطة</label>
@@ -253,6 +246,18 @@
           <div id="ft-shop"></div>
         </div>
       </div>
+      <div class="field" id="vatcert-field" style="display:none">
+        <label><span class="req">*</span> صورة الشهادة الضريبية</label>
+        <div class="upload-wrap" id="uw-vatcert" onclick="document.getElementById('up-vatcert').click()">
+          <div class="upload-hint">
+            <span class="up-icon">🧾</span>
+            <span class="up-text">اضغط لرفع الملف</span>
+            <div class="up-sub">صورة أو PDF • الحد الأقصى 10MB</div>
+          </div>
+          <input type="file" id="up-vatcert" name="صورة الشهادة الضريبية" accept="image/*,.pdf" style="display:none" onchange="markFile('vatcert',this)">
+          <div id="ft-vatcert"></div>
+        </div>
+      </div>
     </div>
 
     <button type="button" class="send-btn" id="send-btn" onclick="submitForm()">
@@ -345,17 +350,21 @@ const p = new URLSearchParams(location.search);
 
 document.getElementById('f-subject').value = 'طلب انضمام جديد | قسيمة بلس';
 
-const filled = { cr:false, addr:false, iban:false, shop:false };
-const fv = { agent:false, cr:false, vat:false, loc:false, owner:false, rep:false, branches:false };
-const totalFields = 9;
+const filled = { cr:false, addr:false, iban:false, shop:false, vatcert:false };
+const fv = { agent:false, loc:false, owner:false, rep:false, branches:false, vatStatus:false };
+
+function vatCertRequired() {
+  return document.getElementById('f-vat-status').value === 'يوجد ضريبة';
+}
 
 function updateProgress() {
-  let done = 0;
-  if(fv.cr) done++; if(fv.vat) done++; if(fv.loc) done++;
-  if(fv.owner) done++; if(fv.rep) done++;
-  if(filled.cr) done++; if(filled.addr) done++;
-  if(filled.iban) done++; if(filled.shop) done++;
-  document.getElementById('progress-bar').style.width = Math.round((done/totalFields)*100) + '%';
+  let done = 0, total = 8;
+  if(fv.loc) done++; if(fv.owner) done++; if(fv.rep) done++;
+  if(fv.vatStatus) done++; if(fv.branches) done++;
+  if(filled.cr) done++; if(filled.addr) done++; if(filled.iban) done++; if(filled.shop) done++;
+  total = 9;
+  if(vatCertRequired()) { total = 10; if(filled.vatcert) done++; }
+  document.getElementById('progress-bar').style.width = Math.round((done/total)*100) + '%';
 }
 
 function setStatus(input, iconId, errId, isValid, isDirty) {
@@ -366,15 +375,12 @@ function setStatus(input, iconId, errId, isValid, isDirty) {
   else { input.className='invalid'; icon.textContent='❌'; err.style.display='block'; }
   updateProgress();
 }
-function validateCR(el) {
-  const v = el.value.replace(/\D/g,''); el.value=v;
-  fv.cr = v.length===10 && v.startsWith('7');
-  setStatus(el,'ic-cr','err-cr',fv.cr,v.length>0);
-}
-function validateVAT(el) {
-  const v = el.value.replace(/\D/g,''); el.value=v;
-  fv.vat = v.length===15 && v.startsWith('3');
-  setStatus(el,'ic-vat','err-vat',fv.vat,v.length>0);
+function onVatStatusChange() {
+  const sel = document.getElementById('f-vat-status').value;
+  const wrap = document.getElementById('vatcert-field');
+  fv.vatStatus = (sel === 'معفي' || sel === 'يوجد ضريبة');
+  wrap.style.display = (sel === 'يوجد ضريبة') ? 'block' : 'none';
+  updateProgress();
 }
 function validateURL(el) {
   const v = el.value.trim();
@@ -419,11 +425,14 @@ function onBranchCount(el) {
   updateProgress();
 }
 function allValid() {
-  return fv.cr && fv.vat && fv.loc && fv.owner && fv.rep && fv.branches &&
+  const base = fv.loc && fv.owner && fv.rep && fv.branches && fv.vatStatus &&
          filled.cr && filled.addr && filled.iban && filled.shop;
+  return base && (!vatCertRequired() || filled.vatcert);
 }
 function highlightErrors() {
-  ['cr','addr','iban','shop'].forEach(k => {
+  const keys = ['cr','addr','iban','shop'];
+  if (vatCertRequired()) keys.push('vatcert');
+  keys.forEach(k => {
     if (!filled[k]) document.getElementById('uw-'+k).classList.add('upload-err');
   });
 }
@@ -506,6 +515,7 @@ async function submitForm() {
       ibanFile:               'up-iban',
       shopImageFile:          'up-shop'
     };
+    if (vatCertRequired()) fileMap.vatCertFile = 'up-vatcert';
     const files = [];
     for (const field in fileMap) {
       const input = document.getElementById(fileMap[field]);
@@ -520,8 +530,7 @@ async function submitForm() {
       key: SECRET,
       agentName:  document.getElementById('f-agent-name').value,
       agentEmail: agentEmail,
-      commercialRegister: document.getElementById('f-cr').value,
-      taxNumber:  document.getElementById('f-vat').value,
+      vatStatus:  document.getElementById('f-vat-status').value,
       mapUrl:     document.getElementById('f-loc').value,
       ownerPhone: document.getElementById('f-owner').value,
       repPhone:   document.getElementById('f-rep').value,
