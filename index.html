@@ -331,7 +331,7 @@ const AGENTS = [
 
 // Set agent from URL param (?a=01 short code, or ?agent=email — both supported)
 const params = new URLSearchParams(location.search);
-const codeParam = params.get('a');
+const codeParam = params.get('ref') || params.get('a');
 const agentParam = params.get('agent');
 // المندوب الافتراضي للرابط الرئيسي (بدون كود)
 const DEFAULT_AGENT = { code: "general", name: "حملة عامة", email: "m.baessa@autobia.sa" };
@@ -359,7 +359,7 @@ if (!agent) agent = DEFAULT_AGENT; // الرابط الرئيسي يعمل تح�
 
 const p = new URLSearchParams(location.search);
 
-document.getElementById('f-subject').value = 'طلب انضمام جديد | قسيمة بلس';
+// subject already set by agent block above
 
 const filled = { cr:false, addr:false, iban:false, shop:false, vatcert:false };
 const fv = { agent:false, loc:false, owner:false, rep:false, branches:false, vatStatus:false };
