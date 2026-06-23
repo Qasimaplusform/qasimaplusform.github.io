@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mohammed Ahmed Baessa — Resume</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─── TOKENS ─────────────────────────────────────────────── */
+    :root {
+      --ground:    #ffffff;
+      --text:      #1a1a1a;
+      --navy:      #1a2e4a;
+      --copper:    #c17f3e;
+      --muted:     #5a6a7e;
+      --rule:      #dde3ea;
+      --navy-light: #243d60;
+
+      --f-body:    'Inter', sans-serif;
+      --f-mono:    'JetBrains Mono', monospace;
+
+      --sz-name:   22pt;
+      --sz-title:  9pt;
+      --sz-section:10.5pt;
+      --sz-body:   9pt;
+      --sz-mono:   7.5pt;
+      --sz-small:  8pt;
+
+      --page-w:    210mm;
+      --page-h:    297mm;
+      --mg-side:   14mm;
+      --mg-top:    11mm;
+      --mg-bottom: 11mm;
+      --spine:     3px;
+      --spine-gap: 9mm;
+    }
+
+    /* ─── RESET ──────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ─── PAGE SHELL ─────────────────────────────────────────── */
+    html, body {
+      background: #e8ecf0;
+      font-family: var(--f-body);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page {
+      width: var(--page-w);
+      min-height: var(--page-h);
+      background: var(--ground);
+      margin: 24px auto;
+      box-shadow: 0 4px 32px rgba(0,0,0,0.18), 0 1px 4px rgba(0,0,0,0.10);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ─── SPINE — the legal-document spine running left margin ── */
+    .page::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: var(--mg-side);
+      width: var(--spine);
+      height: 100%;
+      background: var(--navy);
+      z-index: 1;
+    }
+
+    /* ─── HEADER BLOCK ───────────────────────────────────────── */
+    .header {
+      background: var(--navy);
+      padding: var(--mg-top) var(--mg-side) 10mm var(--mg-side);
+      padding-left: calc(var(--mg-side) + var(--spine) + var(--spine-gap));
+      position: relative;
+      z-index: 2;
+    }
+
+    .header-name {
+      font-family: var(--f-body);
+      font-size: var(--sz-name);
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: #ffffff;
+      line-height: 1.1;
+      text-transform: uppercase;
+    }
+
+    /* copper rule beneath name — the one aesthetic risk made visible */
+    .name-rule {
+      display: block;
+      width: 40px;
+      height: 2px;
+      background: var(--copper);
+      margin: 5px 0 6px;
+    }
+
+    .header-title {
+      font-family: var(--f-body);
+      font-size: var(--sz-title);
+      font-weight: 400;
+      color: rgba(255,255,255,0.75);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      line-height: 1.5;
+    }
+
+    .header-contact {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0 22px;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .contact-item {
+      font-family: var(--f-mono);
+      font-size: var(--sz-mono);
+      color: rgba(255,255,255,0.80);
+      letter-spacing: 0.02em;
+      line-height: 1.8;
+      white-space: nowrap;
+    }
+
+    .contact-item span.label {
+      color: var(--copper);
+      margin-right: 4px;
+      font-weight: 500;
+    }
+
+    /* ─── BODY ───────────────────────────────────────────────── */
+    .body {
+      padding: 9mm var(--mg-side) var(--mg-bottom) calc(var(--mg-side) + var(--spine) + var(--spine-gap));
+      position: relative;
+      z-index: 2;
+    }
+
+    /* ─── SECTION ────────────────────────────────────────────── */
+    .section {
+      margin-bottom: 7mm;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4.5mm;
+      padding-bottom: 2.5mm;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .section-header h2 {
+      font-family: var(--f-body);
+      font-size: var(--sz-section);
+      font-weight: 600;
+      color: var(--navy);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      border-left: 3px solid var(--copper);
+      padding-left: 7px;
+      line-height: 1;
+    }
+
+    /* ─── EXPERIENCE ENTRY ───────────────────────────────────── */
+    .entry {
+      margin-bottom: 5.5mm;
+    }
+
+    .entry:last-child {
+      margin-bottom: 0;
+    }
+
+    .entry-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 1mm;
+    }
+
+    .entry-role {
+      font-size: var(--sz-body);
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    .entry-dates {
+      font-family: var(--f-mono);
+      font-size: var(--sz-mono);
+      color: var(--muted);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .entry-org {
+      font-size: var(--sz-small);
+      font-weight: 400;
+      color: var(--muted);
+      margin-bottom: 2.5mm;
+      letter-spacing: 0.02em;
+    }
+
+    .entry-org strong {
+      color: var(--navy);
+      font-weight: 500;
+    }
+
+    /* ─── BULLETS ────────────────────────────────────────────── */
+    .bullets {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .bullets li {
+      font-size: var(--sz-body);
+      font-weight: 400;
+      color: var(--text);
+      line-height: 1.55;
+      padding-left: 11px;
+      position: relative;
+      margin-bottom: 1.2mm;
+    }
+
+    .bullets li::before {
+      content: '▸';
+      position: absolute;
+      left: 0;
+      top: 0;
+      color: var(--copper);
+      font-size: 7pt;
+      line-height: 1.7;
+    }
+
+    /* ─── EDUCATION ──────────────────────────────────────────── */
+    .edu-entry {
+      margin-bottom: 3.5mm;
+    }
+
+    .edu-degree {
+      font-size: var(--sz-body);
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    .edu-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .edu-institution {
+      font-size: var(--sz-small);
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    .edu-dates {
+      font-family: var(--f-mono);
+      font-size: var(--sz-mono);
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+
+    .edu-note {
+      font-size: var(--sz-small);
+      color: var(--muted);
+      margin-top: 1.5mm;
+      line-height: 1.5;
+      font-style: italic;
+    }
+
+    .edu-note strong {
+      font-style: normal;
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .edu-gpa {
+      display: inline-block;
+      background: var(--navy);
+      color: #fff;
+      font-family: var(--f-mono);
+      font-size: 6.5pt;
+      letter-spacing: 0.06em;
+      padding: 1px 6px 2px;
+      border-radius: 2px;
+      margin-left: 6px;
+      vertical-align: middle;
+      font-weight: 500;
+    }
+
+    /* ─── TWO-COLUMN LOWER ───────────────────────────────────── */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 7mm;
+    }
+
+    /* ─── CERTIFICATIONS ─────────────────────────────────────── */
+    .cert-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .cert-list li {
+      font-size: var(--sz-body);
+      color: var(--text);
+      line-height: 1.55;
+      padding-left: 11px;
+      position: relative;
+      margin-bottom: 1.5mm;
+    }
+
+    .cert-list li::before {
+      content: '▸';
+      position: absolute;
+      left: 0;
+      top: 0;
+      color: var(--copper);
+      font-size: 7pt;
+      line-height: 1.7;
+    }
+
+    .cert-list li span.cert-sub {
+      display: block;
+      font-size: 7.5pt;
+      color: var(--muted);
+      font-family: var(--f-mono);
+    }
+
+    /* ─── SKILLS ─────────────────────────────────────────────── */
+    .skill-group {
+      margin-bottom: 3mm;
+    }
+
+    .skill-label {
+      font-size: 7.5pt;
+      font-weight: 600;
+      color: var(--navy);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 1mm;
+    }
+
+    .skill-text {
+      font-size: var(--sz-small);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    /* ─── PRINT ──────────────────────────────────────────────── */
+    @media print {
+      @page {
+        size: A4;
+        margin: 0;
+      }
+
+      html, body {
+        background: #ffffff;
+        margin: 0;
+        padding: 0;
+      }
+
+      .page {
+        width: 210mm;
+        height: 297mm;
+        min-height: unset;
+        margin: 0;
+        box-shadow: none;
+        page-break-after: avoid;
+        overflow: hidden;
+      }
+
+      .section {
+        page-break-inside: avoid;
+      }
+
+      .entry {
+        page-break-inside: avoid;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+
+    <!-- ══ HEADER ══════════════════════════════════════════════ -->
+    <header class="header">
+      <h1 class="header-name">Mohammed Ahmed Baessa</h1>
+      <span class="name-rule" aria-hidden="true"></span>
+      <p class="header-title">Legal Specialist &nbsp;·&nbsp; Commercial Contracts &nbsp;·&nbsp; Fintech Compliance &nbsp;·&nbsp; BNPL Operations</p>
+      <div class="header-contact">
+        <span class="contact-item"><span class="label">✉</span>modahmedb@gmail.com</span>
+        <span class="contact-item"><span class="label">✆</span>+966 50 388 0897</span>
+        <span class="contact-item"><span class="label">⌖</span>Madinah, KSA</span>
+      </div>
+    </header>
+
+    <!-- ══ BODY ════════════════════════════════════════════════ -->
+    <main class="body">
+
+      <!-- EXPERIENCE -->
+      <section class="section" aria-label="Professional Experience">
+        <div class="section-header">
+          <h2>Professional Experience</h2>
+        </div>
+
+        <!-- Role 1 -->
+        <div class="entry">
+          <div class="entry-head">
+            <span class="entry-role">Key Account Manager &amp; Legal Operations Specialist</span>
+            <span class="entry-dates">Jan 2025 – Present</span>
+          </div>
+          <p class="entry-org"><strong>Autobia</strong> — Qasima Plus (BNPL Product) &nbsp;·&nbsp; Riyadh, KSA</p>
+          <ul class="bullets">
+            <li>Architected the company's inaugural standardized BNPL merchant agreement template from first principles, establishing the contractual foundation for all merchant onboarding at scale.</li>
+            <li>Maintained end-to-end drafting ownership of all merchant agreements, ensuring full alignment with SAMA BNPL Rules and the Finance Companies Control Law across every contract iteration.</li>
+            <li>Spearheaded direct legal negotiations with enterprise merchants, navigating commercial risk allocation, liability caps, and termination provisions to protect the company's regulatory standing.</li>
+            <li>Engineered a contract repository and CLM workflow within Zoho CRM, reducing obligation-tracking gaps and enabling real-time compliance visibility across the merchant portfolio.</li>
+            <li>Led financial-fraud investigations and complex merchant escalations, coordinating cross-functionally between operations, finance, and compliance to resolve disputes with legal precision.</li>
+          </ul>
+        </div>
+
+        <!-- Role 2 -->
+        <div class="entry">
+          <div class="entry-head">
+            <span class="entry-role">Sales Support &amp; Legal Administration Specialist</span>
+            <span class="entry-dates">Jan 2024 – Jan 2025</span>
+          </div>
+          <p class="entry-org"><strong>Autobia</strong> &nbsp;·&nbsp; Riyadh, KSA</p>
+          <ul class="bullets">
+            <li>Drafted and reviewed a high volume of commercial agreements, NDAs, and corporate onboarding documentation, establishing documentation standards that reduced review cycles.</li>
+            <li>Streamlined cross-functional documentation and reporting workflows, improving operational compliance visibility between sales, legal, and finance teams.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- EDUCATION -->
+      <section class="section" aria-label="Education">
+        <div class="section-header">
+          <h2>Education</h2>
+        </div>
+
+        <div class="edu-entry">
+          <div class="edu-meta">
+            <span class="edu-degree">
+              Bachelor of Law (LL.B.)
+              <span class="edu-gpa">GPA 3.65 / 4.0</span>
+            </span>
+            <span class="edu-dates">Expected 2026</span>
+          </div>
+          <p class="edu-institution">Saudi Electronic University &nbsp;·&nbsp; Madinah, KSA</p>
+          <p class="edu-note">
+            <strong>Graduation Research:</strong> "The Legal Characterization of Finance Sale Contracts" — examined the doctrinal classification of installment sales and purchase-linked consumer finance instruments under the Saudi Civil Transactions Law, with direct application to BNPL product structuring.
+          </p>
+        </div>
+      </section>
+
+      <!-- TWO-COLUMN: CERTIFICATIONS + SKILLS -->
+      <div class="two-col">
+
+        <!-- CERTIFICATIONS -->
+        <section class="section" aria-label="Certifications">
+          <div class="section-header">
+            <h2>Certifications</h2>
+          </div>
+          <ul class="cert-list">
+            <li>
+              Project Management Professional (PMP)
+              <span class="cert-sub">Project Management Institute · 2025</span>
+            </li>
+            <li>
+              Commercial Negotiation &amp; Contract Techniques
+              <span class="cert-sub">Contract drafting · risk allocation · deal structuring</span>
+            </li>
+            <li>
+              Zoho CRM — Legal Operations &amp; Contract Workflows
+              <span class="cert-sub">CLM configuration · obligation tracking · automation</span>
+            </li>
+          </ul>
+        </section>
+
+        <!-- SKILLS -->
+        <section class="section" aria-label="Core Skills">
+          <div class="section-header">
+            <h2>Core Competencies</h2>
+          </div>
+
+          <div class="skill-group">
+            <div class="skill-label">Legal Drafting &amp; Negotiation</div>
+            <div class="skill-text">Commercial contracts, vendor agreements, merchant terms, NDAs</div>
+          </div>
+
+          <div class="skill-group">
+            <div class="skill-label">Fintech Regulatory</div>
+            <div class="skill-text">SAMA BNPL Rules, Finance Companies Control Law, consumer data protection</div>
+          </div>
+
+          <div class="skill-group">
+            <div class="skill-label">Legal Operations &amp; CLM</div>
+            <div class="skill-text">Contract lifecycle management, repository design, obligation tracking</div>
+          </div>
+
+          <div class="skill-group">
+            <div class="skill-label">Risk &amp; Dispute Resolution</div>
+            <div class="skill-text">Financial-fraud handling, legal risk flagging, cross-functional escalation</div>
+          </div>
+
+          <div class="skill-group">
+            <div class="skill-label">Languages &amp; Tools</div>
+            <div class="skill-text">Arabic (Native) · English (Professional) · MS Office · Zoho CRM</div>
+          </div>
+        </section>
+
+      </div><!-- /two-col -->
+
+    </main>
+  </div>
+</body>
+</html>
