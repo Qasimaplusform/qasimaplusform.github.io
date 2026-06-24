@@ -22,9 +22,9 @@
 
       --page-w: 210mm;
       --page-h: 297mm;
-      --mx: 18mm;   /* left / right margin */
-      --mt: 15mm;   /* top */
-      --mb: 14mm;   /* bottom */
+      --mx: 16mm;   /* left / right margin */
+      --mt: 9mm;    /* top */
+      --mb: 7mm;    /* bottom */
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -49,7 +49,7 @@
     /* ─── HEADER ───────────────────────────────────── */
     .name {
       font-family: var(--f-head);
-      font-size: 24pt;          /* NAME */
+      font-size: 22pt;          /* NAME */
       font-weight: 700;
       color: var(--navy);
       letter-spacing: 0.01em;
@@ -71,7 +71,7 @@
       font-size: 9.5pt;         /* CONTACT */
       color: var(--soft);
       text-align: center;
-      margin-top: 7px;
+      margin-top: 6px;
       letter-spacing: 0.01em;
     }
     .contact .sep { color: var(--rule); margin: 0 8px; }
@@ -79,34 +79,34 @@
     .header-rule {
       border: 0;
       border-top: 1.5px solid var(--navy);
-      margin: 11px 0 0;
+      margin: 9px 0 0;
     }
 
     /* ─── SECTION ──────────────────────────────────── */
-    .section { margin-top: 7.5mm; }
+    .section { margin-top: 3.2mm; }
 
     .sec-head {
       font-family: var(--f-head);
-      font-size: 10.5pt;        /* SECTION HEADING */
+      font-size: 10pt;          /* SECTION HEADING */
       font-weight: 700;
       color: var(--navy);
       text-transform: uppercase;
       letter-spacing: 0.13em;
-      padding-bottom: 2.5px;
+      padding-bottom: 2px;
       border-bottom: 0.75px solid var(--rule);
-      margin-bottom: 3.5mm;
+      margin-bottom: 2.2mm;
     }
 
     /* ─── SUMMARY ──────────────────────────────────── */
     .summary {
-      font-size: 10pt;          /* BODY */
-      line-height: 1.55;
+      font-size: 9.5pt;         /* BODY */
+      line-height: 1.38;
       color: var(--gray);
       text-align: justify;
     }
 
     /* ─── EXPERIENCE ───────────────────────────────── */
-    .entry { margin-bottom: 5mm; }
+    .entry { margin-bottom: 3mm; }
     .entry:last-child { margin-bottom: 0; }
 
     .entry-row {
@@ -118,14 +118,14 @@
 
     .entry-role {
       font-family: var(--f-head);
-      font-size: 10.5pt;        /* JOB TITLE */
+      font-size: 10pt;          /* JOB TITLE */
       font-weight: 600;
       color: var(--gray);
       line-height: 1.25;
     }
 
     .entry-date {
-      font-size: 9.5pt;
+      font-size: 9pt;
       font-weight: 500;
       color: var(--soft);
       white-space: nowrap;
@@ -133,21 +133,21 @@
     }
 
     .entry-org {
-      font-size: 10pt;
+      font-size: 9.5pt;
       font-weight: 600;
       color: var(--navy);
-      margin: 0.5mm 0 2mm;
+      margin: 0.3mm 0 1.2mm;
     }
 
     ul.bullets { list-style: none; }
 
     ul.bullets li {
-      font-size: 10pt;          /* BODY */
-      line-height: 1.5;
+      font-size: 9pt;           /* BODY */
+      line-height: 1.4;
       color: var(--gray);
       padding-left: 13px;
       position: relative;
-      margin-bottom: 1.3mm;
+      margin-bottom: 0.7mm;
       text-align: justify;
     }
 
@@ -155,19 +155,19 @@
       content: '';
       position: absolute;
       left: 0;
-      top: 6.5px;
-      width: 4px;
-      height: 4px;
+      top: 5.5px;
+      width: 3.5px;
+      height: 3.5px;
       background: var(--navy);
       border-radius: 50%;
     }
 
     /* ─── SKILLS ───────────────────────────────────── */
     .skill-line {
-      font-size: 10pt;
-      line-height: 1.65;
+      font-size: 9pt;
+      line-height: 1.45;
       color: var(--gray);
-      margin-bottom: 1mm;
+      margin-bottom: 0.6mm;
     }
     .skill-line .cat {
       font-weight: 600;
@@ -183,21 +183,21 @@
     }
     .edu-degree {
       font-family: var(--f-head);
-      font-size: 10.5pt;
+      font-size: 10pt;
       font-weight: 600;
       color: var(--gray);
     }
     .edu-degree .gpa { font-weight: 500; color: var(--soft); }
-    .edu-date { font-size: 9.5pt; font-weight: 500; color: var(--soft); white-space: nowrap; }
+    .edu-date { font-size: 9pt; font-weight: 500; color: var(--soft); white-space: nowrap; }
     .edu-inst {
-      font-size: 10pt;
+      font-size: 9.5pt;
       font-weight: 600;
       color: var(--navy);
-      margin: 0.5mm 0 1.5mm;
+      margin: 0.5mm 0 1.2mm;
     }
     .edu-note {
-      font-size: 9.5pt;
-      line-height: 1.5;
+      font-size: 9pt;
+      line-height: 1.45;
       color: var(--gray);
       text-align: justify;
     }
@@ -206,20 +206,20 @@
     /* ─── CERTIFICATIONS ───────────────────────────── */
     ul.certs { list-style: none; }
     ul.certs li {
-      font-size: 10pt;
-      line-height: 1.5;
+      font-size: 9pt;
+      line-height: 1.4;
       color: var(--gray);
       padding-left: 13px;
       position: relative;
-      margin-bottom: 1.3mm;
+      margin-bottom: 1mm;
     }
     ul.certs li::before {
       content: '';
       position: absolute;
       left: 0;
-      top: 6.5px;
-      width: 4px;
-      height: 4px;
+      top: 6px;
+      width: 3.5px;
+      height: 3.5px;
       background: var(--navy);
       border-radius: 50%;
     }
@@ -260,7 +260,7 @@
   <section class="section">
     <h2 class="sec-head">Professional Summary</h2>
     <p class="summary">
-      Fintech operations and merchant partnerships professional with 2+ years of embedded experience inside a live KSA BNPL product (Qasima Plus / Autobia). Combines hands-on Key Account Management, commercial onboarding, and merchant growth with practical exposure to contract drafting support, SAMA compliance awareness, and fraud and dispute resolution — a commercial profile reinforced by an LL.B. (GPA 3.65/4.0) with graduation research focused on the legal architecture underpinning BNPL and installment-sale models. Equipped to operate at the intersection of business development, operational governance, and regulatory compliance within Saudi fintech.
+      Fintech commercial and operations professional with 2+ years inside a live KSA BNPL product (Qasima Plus / Autobia). Blends hands-on Key Account Management, merchant onboarding, and commercial negotiation with practical exposure to contracts support, SAMA compliance, and fraud and dispute resolution — reinforced by an LL.B. (GPA 3.65/4.0) with graduation research on the legal framework underpinning BNPL and installment-sale models. Operates across business development, operational governance, and regulatory compliance in Saudi fintech.
     </p>
   </section>
 
@@ -277,10 +277,10 @@
       <p class="entry-org">Autobia · Qasima Plus — BNPL Product · Riyadh, KSA</p>
       <ul class="bullets">
         <li>Owned a portfolio of [#] enterprise merchants across the full BNPL lifecycle — onboarding, commercial negotiations, account health, and renewals — acting as the primary business relationship owner and driving [#]% growth in active merchant accounts.</li>
-        <li>Standardized the company's BNPL merchant agreement templates in coordination with management, building a repeatable documentation framework aligned with SAMA BNPL Rules that cut average onboarding time by [#]%.</li>
-        <li>Negotiated commercial terms directly with enterprise clients — including SLAs, payment conditions, and termination provisions — balancing merchant acquisition targets against the company's compliance and risk thresholds.</li>
-        <li>Reviewed merchant contracts to flag regulatory and commercial risk gaps, coordinating with senior stakeholders to resolve issues pre-execution and reduce contract revision cycles.</li>
-        <li>Built and maintained a contract repository and obligation-tracking system in Zoho CRM, improving visibility into renewal timelines, compliance checkpoints, and merchant milestones across the portfolio.</li>
+        <li>Standardized the company's BNPL merchant agreement templates with management, building a repeatable framework aligned with SAMA BNPL Rules that cut average onboarding time by [#]%.</li>
+        <li>Negotiated commercial terms directly with enterprise clients — SLAs, payment conditions, and termination provisions — balancing acquisition targets against compliance and risk thresholds.</li>
+        <li>Reviewed merchant contracts to flag regulatory and commercial risk gaps, coordinating with senior stakeholders to resolve issues pre-execution and reduce revision cycles.</li>
+        <li>Built and maintained a contract repository and obligation-tracking system in Zoho CRM, improving visibility into renewals, compliance checkpoints, and merchant milestones.</li>
         <li>Resolved financial-fraud cases and high-stakes merchant escalations, coordinating across operations, finance, and management to deliver structured, policy-aligned outcomes.</li>
       </ul>
     </div>
@@ -317,7 +317,7 @@
     </div>
     <p class="edu-inst">Saudi Electronic University · Riyadh, KSA</p>
     <p class="edu-note">
-      <span class="lbl">Graduation Research:</span> "The Legal Characterization of Finance Sale Contracts" — examined the classification of installment sales and purchase-linked consumer finance under the Saudi Civil Transactions Law, directly mapping the legislative framework that governs the BNPL model in KSA.
+      <span class="lbl">Graduation Research:</span> "The Legal Characterization of Finance Sale Contracts" — examined installment sales and purchase-linked consumer finance under the Saudi Civil Transactions Law, mapping the framework that governs the BNPL model in KSA.
     </p>
   </section>
 
