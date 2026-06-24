@@ -6,69 +6,83 @@
   <title>Mohammed Ahmed Baessa — Resume</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
 
   <style>
+    /* ─── TOKENS ─────────────────────────────── */
     :root {
-      --ink:      #111827;
-      --navy:     #1e3a5f;
-      --gold:     #b8922a;
-      --muted:    #6b7280;
-      --rule:     #e5e7eb;
-      --bg:       #ffffff;
+      --ink:        #0f172a;
+      --navy:       #1e3a5f;
+      --teal:       #0d7377;
+      --accent:     #14a085;
+      --muted:      #64748b;
+      --light:      #94a3b8;
+      --rule:       #e2e8f0;
+      --bg-tag:     #f0fdf9;
+      --border-tag: #99e6d8;
+      --bg:         #ffffff;
 
-      --f-serif: 'EB Garamond', Georgia, serif;
-      --f-sans:  'Inter', sans-serif;
+      --f: 'Inter', system-ui, sans-serif;
 
-      --page-w:  210mm;
-      --page-h:  297mm;
-      --ml:      16mm;
-      --mr:      14mm;
-      --mt:      12mm;
-      --mb:      10mm;
+      --page-w: 210mm;
+      --page-h: 297mm;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     html, body {
-      background: #d1d5db;
-      font-family: var(--f-sans);
+      background: #cbd5e1;
+      font-family: var(--f);
       color: var(--ink);
       -webkit-font-smoothing: antialiased;
+      font-size: 9pt;
     }
 
-    /* ── PAGE ───────────────────────────────────────────── */
+    /* ─── PAGE ───────────────────────────────── */
     .page {
       width: var(--page-w);
       min-height: var(--page-h);
       background: var(--bg);
       margin: 28px auto;
-      box-shadow: 0 8px 40px rgba(0,0,0,0.15);
-      display: flex;
-      flex-direction: column;
+      box-shadow: 0 10px 50px rgba(0,0,0,0.18);
+      display: grid;
+      grid-template-rows: auto 1fr;
     }
 
-    /* ── HEADER ─────────────────────────────────────────── */
+    /* ─── TOP BAR (accent strip) ─────────────── */
+    .top-bar {
+      height: 4px;
+      background: linear-gradient(90deg, var(--navy) 0%, var(--teal) 55%, var(--accent) 100%);
+    }
+
+    /* ─── HEADER ─────────────────────────────── */
     .hd {
-      padding: var(--mt) var(--mr) 8mm var(--ml);
-      border-bottom: 2px solid var(--navy);
+      padding: 8mm 14mm 6mm 14mm;
+      border-bottom: 1px solid var(--rule);
     }
 
-    .hd-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      gap: 12px;
-      margin-bottom: 5px;
+    .hd-grid {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: start;
     }
 
     .hd-name {
-      font-family: var(--f-serif);
-      font-size: 28pt;
-      font-weight: 500;
+      font-size: 21pt;
+      font-weight: 700;
       color: var(--navy);
-      letter-spacing: -0.01em;
+      letter-spacing: -0.02em;
       line-height: 1;
+      margin-bottom: 3px;
+    }
+
+    .hd-title {
+      font-size: 8.5pt;
+      font-weight: 400;
+      color: var(--teal);
+      letter-spacing: 0.04em;
+      line-height: 1.4;
     }
 
     .hd-contact {
@@ -76,241 +90,247 @@
       flex-direction: column;
       align-items: flex-end;
       gap: 2px;
+      margin-top: 2px;
     }
 
     .hd-contact span {
       font-size: 7.8pt;
       color: var(--muted);
-      font-family: var(--f-sans);
       line-height: 1.6;
-      white-space: nowrap;
     }
 
-    .hd-contact span b {
-      color: var(--navy);
-      font-weight: 600;
-    }
-
-    .hd-title {
-      font-size: 8.5pt;
-      font-weight: 400;
-      color: var(--gold);
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      font-family: var(--f-sans);
-    }
-
-    /* ── BODY LAYOUT ─────────────────────────────────────── */
+    /* ─── BODY LAYOUT ────────────────────────── */
     .body {
       display: grid;
-      grid-template-columns: 1fr 58mm;
-      flex: 1;
-      gap: 0;
+      grid-template-columns: 1fr 59mm;
+      align-items: start;
     }
 
-    .main-col {
-      padding: 8mm var(--mr) var(--mb) var(--ml);
+    .main {
+      padding: 7mm 8mm 8mm 14mm;
       border-right: 1px solid var(--rule);
     }
 
-    .side-col {
-      padding: 8mm 10mm var(--mb) 8mm;
+    .side {
+      padding: 7mm 12mm 8mm 9mm;
     }
 
-    /* ── SECTION HEADER ──────────────────────────────────── */
-    .sec-head {
-      font-family: var(--f-sans);
-      font-size: 7pt;
+    /* ─── SECTION ────────────────────────────── */
+    .sec { margin-bottom: 5.5mm; }
+    .sec:last-child { margin-bottom: 0; }
+
+    .sec-title {
+      font-size: 6.5pt;
       font-weight: 700;
-      color: var(--navy);
+      color: var(--teal);
       text-transform: uppercase;
-      letter-spacing: 0.2em;
-      border-bottom: 1px solid var(--navy);
-      padding-bottom: 2px;
-      margin-bottom: 4.5mm;
+      letter-spacing: 0.22em;
+      margin-bottom: 3mm;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .sec-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--rule);
     }
 
-    .section {
-      margin-bottom: 6.5mm;
+    /* ─── SUMMARY ────────────────────────────── */
+    .summary {
+      font-size: 8.3pt;
+      color: var(--ink);
+      line-height: 1.65;
+      font-weight: 400;
     }
 
-    /* ── EXPERIENCE ──────────────────────────────────────── */
-    .entry {
-      margin-bottom: 5mm;
+    .summary b {
+      color: var(--navy);
+      font-weight: 600;
     }
+
+    /* ─── EXPERIENCE ─────────────────────────── */
+    .entry { margin-bottom: 5mm; }
     .entry:last-child { margin-bottom: 0; }
 
-    .entry-head {
+    .entry-hd {
       display: flex;
       justify-content: space-between;
       align-items: baseline;
-      gap: 8px;
-      margin-bottom: 0.5mm;
+      gap: 6px;
+      margin-bottom: 0.8mm;
     }
 
     .entry-role {
-      font-family: var(--f-serif);
-      font-size: 10.5pt;
-      font-weight: 600;
+      font-size: 9pt;
+      font-weight: 700;
       color: var(--ink);
       line-height: 1.2;
     }
 
-    .entry-dates {
-      font-size: 7.2pt;
-      color: var(--muted);
+    .entry-date {
+      font-size: 7pt;
+      color: var(--light);
       white-space: nowrap;
       flex-shrink: 0;
       font-variant-numeric: tabular-nums;
     }
 
     .entry-org {
-      font-size: 8pt;
-      color: var(--gold);
+      font-size: 7.8pt;
       font-weight: 600;
-      letter-spacing: 0.03em;
+      color: var(--teal);
       margin-bottom: 2.5mm;
       text-transform: uppercase;
+      letter-spacing: 0.04em;
     }
 
-    .bullets {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
+    .bullets { list-style: none; }
 
     .bullets li {
-      font-size: 8.3pt;
-      color: var(--ink);
-      line-height: 1.58;
-      padding-left: 10px;
-      position: relative;
-      margin-bottom: 1.2mm;
-    }
-
-    .bullets li::before {
-      content: '—';
-      position: absolute;
-      left: 0;
-      top: 0;
-      color: var(--gold);
       font-size: 8pt;
-      line-height: 1.58;
-    }
-
-    /* ── EDUCATION ───────────────────────────────────────── */
-    .edu-degree {
-      font-family: var(--f-serif);
-      font-size: 10.5pt;
-      font-weight: 600;
-      color: var(--ink);
-      line-height: 1.2;
-    }
-
-    .edu-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 8px;
+      color: #1e293b;
+      line-height: 1.6;
+      padding-left: 12px;
+      position: relative;
       margin-bottom: 1mm;
     }
 
-    .edu-inst {
-      font-size: 8pt;
-      color: var(--gold);
+    .bullets li::before {
+      content: '▸';
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-size: 7pt;
+      line-height: 1.75;
+    }
+
+    .bullets li b {
+      color: var(--navy);
       font-weight: 600;
-      letter-spacing: 0.03em;
+    }
+
+    /* ─── EDUCATION ──────────────────────────── */
+    .edu-hd {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 6px;
+      margin-bottom: 0.5mm;
+    }
+
+    .edu-degree {
+      font-size: 9pt;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .gpa {
+      display: inline-block;
+      background: var(--navy);
+      color: #fff;
+      font-size: 6pt;
+      font-weight: 600;
+      padding: 1px 5px 2px;
+      border-radius: 2px;
+      margin-left: 5px;
+      vertical-align: middle;
+      letter-spacing: 0.05em;
+    }
+
+    .edu-inst {
+      font-size: 7.8pt;
+      font-weight: 600;
+      color: var(--teal);
       text-transform: uppercase;
-      margin-bottom: 2mm;
+      letter-spacing: 0.04em;
+      margin-bottom: 1.5mm;
     }
 
     .edu-note {
       font-size: 7.8pt;
       color: var(--muted);
       line-height: 1.55;
-      font-style: italic;
     }
+
     .edu-note b {
-      font-style: normal;
       color: var(--ink);
-      font-weight: 500;
-    }
-
-    .gpa-badge {
-      display: inline-block;
-      background: var(--navy);
-      color: #fff;
-      font-size: 6.2pt;
       font-weight: 600;
-      letter-spacing: 0.07em;
-      padding: 1px 5px 2px;
-      border-radius: 2px;
-      margin-left: 6px;
-      vertical-align: middle;
-      font-family: var(--f-sans);
     }
 
-    /* ── SIDEBAR SECTIONS ────────────────────────────────── */
-    .side-section {
-      margin-bottom: 6mm;
-    }
-
-    .skill-item {
-      margin-bottom: 3.5mm;
-    }
+    /* ─── SIDEBAR — SKILLS ───────────────────── */
+    .skill-group { margin-bottom: 4mm; }
 
     .skill-label {
-      font-size: 7pt;
+      font-size: 6.5pt;
       font-weight: 700;
       color: var(--navy);
       text-transform: uppercase;
-      letter-spacing: 0.1em;
-      margin-bottom: 0.8mm;
+      letter-spacing: 0.12em;
+      margin-bottom: 1.5mm;
     }
 
-    .skill-text {
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 3px;
+    }
+
+    .tag {
+      background: var(--bg-tag);
+      border: 1px solid var(--border-tag);
+      color: var(--teal);
+      font-size: 6.8pt;
+      font-weight: 500;
+      padding: 1.5px 6px 2px;
+      border-radius: 3px;
+      white-space: nowrap;
+    }
+
+    .tag-plain {
       font-size: 7.8pt;
       color: var(--ink);
-      line-height: 1.5;
+      line-height: 1.65;
     }
 
-    .cert-item {
-      margin-bottom: 3.5mm;
-    }
+    /* ─── SIDEBAR — CERTS ────────────────────── */
+    .cert { margin-bottom: 3.5mm; }
 
     .cert-name {
-      font-size: 8pt;
+      font-size: 7.8pt;
       font-weight: 600;
       color: var(--ink);
       line-height: 1.3;
     }
 
     .cert-sub {
-      font-size: 7.2pt;
+      font-size: 7pt;
       color: var(--muted);
       line-height: 1.5;
     }
 
+    /* ─── SIDEBAR — LANGUAGES ────────────────── */
     .lang-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 2.5mm;
+      margin-bottom: 2mm;
     }
 
-    .lang-name {
-      font-size: 8pt;
-      color: var(--ink);
-      font-weight: 500;
+    .lang-name { font-size: 8pt; font-weight: 500; color: var(--ink); }
+
+    .lang-badge {
+      font-size: 6.5pt;
+      color: var(--teal);
+      font-weight: 600;
+      background: var(--bg-tag);
+      border: 1px solid var(--border-tag);
+      padding: 1px 5px 2px;
+      border-radius: 3px;
     }
 
-    .lang-level {
-      font-size: 7pt;
-      color: var(--muted);
-      font-style: italic;
-    }
-
-    /* ── PRINT ───────────────────────────────────────────── */
+    /* ─── PRINT ──────────────────────────────── */
     @media print {
       @page { size: A4; margin: 0; }
       html, body { background: #fff; }
@@ -330,150 +350,174 @@
 <body>
 <div class="page">
 
-  <!-- HEADER -->
+  <div class="top-bar"></div>
+
+  <!-- ══ HEADER ══════════════════════════════ -->
   <header class="hd">
-    <div class="hd-top">
-      <h1 class="hd-name">Mohammed Ahmed Baessa</h1>
+    <div class="hd-grid">
+      <div>
+        <h1 class="hd-name">Mohammed Ahmed Baessa</h1>
+        <p class="hd-title">Fintech Commercial & Operations Professional &nbsp;·&nbsp; BNPL &nbsp;·&nbsp; Key Accounts &nbsp;·&nbsp; Merchant Partnerships &nbsp;·&nbsp; Contracts &amp; Compliance</p>
+      </div>
       <div class="hd-contact">
-        <span><b>✉</b> modahmedb@gmail.com</span>
-        <span><b>✆</b> +966 50 388 0897</span>
-        <span><b>⌖</b> Riyadh, KSA</span>
+        <span>modahmedb@gmail.com</span>
+        <span>+966 50 388 0897</span>
+        <span>Riyadh, KSA</span>
       </div>
     </div>
-    <p class="hd-title">Legal Specialist &nbsp;·&nbsp; Commercial Contracts &nbsp;·&nbsp; Fintech Compliance &nbsp;·&nbsp; BNPL Operations</p>
   </header>
 
-  <!-- BODY -->
+  <!-- ══ BODY ════════════════════════════════ -->
   <div class="body">
 
-    <!-- MAIN COLUMN -->
-    <div class="main-col">
+    <!-- MAIN COLUMN ─────────────────────────── -->
+    <main class="main">
+
+      <!-- SUMMARY -->
+      <div class="sec">
+        <div class="sec-title">Professional Summary</div>
+        <p class="summary">
+          Fintech operations and merchant partnerships professional with <b>2+ years of embedded experience</b> inside a live KSA BNPL product (Qasima Plus / Autobia). Combines hands-on <b>Key Account Management, commercial onboarding, and merchant growth</b> with practical exposure to <b>contract drafting support, SAMA compliance awareness, and fraud & dispute resolution</b> — a rare commercial profile reinforced by an <b>LL.B. (GPA 3.65/4.0)</b> with graduation research directly focused on the legal architecture underpinning BNPL and installment-sale models. Equipped to operate at the intersection of business development, operational governance, and regulatory compliance within Saudi fintech.
+        </p>
+      </div>
 
       <!-- EXPERIENCE -->
-      <div class="section">
-        <div class="sec-head">Professional Experience</div>
+      <div class="sec">
+        <div class="sec-title">Professional Experience</div>
 
         <!-- Role 1 -->
         <div class="entry">
-          <div class="entry-head">
-            <span class="entry-role">Key Account Manager &amp; Legal Operations Specialist</span>
-            <span class="entry-dates">Jan 2025 – Present</span>
+          <div class="entry-hd">
+            <span class="entry-role">Key Account Manager &amp; Commercial Operations Specialist</span>
+            <span class="entry-date">Jan 2025 – Present</span>
           </div>
-          <div class="entry-org">Autobia · Qasima Plus (BNPL) · Riyadh</div>
+          <div class="entry-org">Autobia · Qasima Plus — BNPL Product · Riyadh, KSA</div>
           <ul class="bullets">
-            <li>Architected the company's inaugural BNPL merchant agreement from first principles — became the sole contractual standard for all enterprise onboarding, eliminating ad-hoc drafting entirely.</li>
-            <li>Owned end-to-end regulatory alignment across every merchant contract, ensuring strict conformity with SAMA BNPL Rules, the Finance Companies Control Law, and consumer data protection requirements.</li>
-            <li>Negotiated directly with enterprise merchants on liability caps, risk allocation, and termination clauses — closing complex deals while preserving the company's legal and regulatory standing.</li>
-            <li>Built a CLM system inside Zoho CRM covering the full contract lifecycle: repository structure, obligation milestones, renewal triggers, and real-time compliance dashboards.</li>
-            <li>Investigated financial-fraud cases and high-stakes merchant escalations, delivering legally precise outcomes through structured coordination with operations, finance, and senior management.</li>
+            <li>Managed a portfolio of <b>enterprise merchants</b> across the full BNPL lifecycle — onboarding, commercial negotiations, ongoing account health, escalations, and contract renewals — serving as the primary business relationship owner.</li>
+            <li>Contributed to the <b>drafting and standardization of the company's BNPL merchant agreement templates</b>, working closely with management to develop a repeatable documentation framework aligned with SAMA BNPL Rules and operational requirements.</li>
+            <li>Reviewed merchant contracts to identify <b>regulatory and commercial risk gaps</b>, coordinating with senior stakeholders to resolve issues before execution — reducing contract back-and-forth cycles.</li>
+            <li>Negotiated commercial terms directly with enterprise clients — including <b>SLAs, payment conditions, and termination provisions</b> — balancing merchant acquisition targets with the company's compliance and risk thresholds.</li>
+            <li>Designed and maintained a <b>contract repository and obligation-tracking system</b> in Zoho CRM, improving visibility into renewal timelines, compliance checkpoints, and merchant milestone tracking.</li>
+            <li>Led <b>financial-fraud investigations and high-stakes merchant escalations</b>, coordinating cross-functionally across operations, finance, and management to deliver structured, policy-aligned resolutions.</li>
           </ul>
         </div>
 
         <!-- Role 2 -->
         <div class="entry">
-          <div class="entry-head">
-            <span class="entry-role">Sales Support &amp; Legal Administration Specialist</span>
-            <span class="entry-dates">Jan 2024 – Jan 2025</span>
+          <div class="entry-hd">
+            <span class="entry-role">Sales Support &amp; Business Operations Specialist</span>
+            <span class="entry-date">Jan 2024 – Jan 2025</span>
           </div>
-          <div class="entry-org">Autobia · Riyadh</div>
+          <div class="entry-org">Autobia · Riyadh, KSA</div>
           <ul class="bullets">
-            <li>Prepared and reviewed commercial agreements, NDAs, and corporate onboarding documentation for BNPL clients — establishing drafting standards that accelerated the sales-to-contract cycle.</li>
-            <li>Redesigned documentation workflows across sales, legal, and finance, creating a unified reporting structure that improved audit-readiness and reduced inter-team bottlenecks.</li>
+            <li>Supported preparation and review of <b>commercial agreements, NDAs, and merchant onboarding documentation</b> for BNPL clients, improving contract execution speed and consistency across the sales pipeline.</li>
+            <li>Redesigned internal documentation and reporting workflows between sales, legal administration, and finance — creating a <b>unified audit trail</b> that improved operational compliance visibility and reduced approval bottlenecks.</li>
           </ul>
         </div>
       </div>
 
       <!-- EDUCATION -->
-      <div class="section">
-        <div class="sec-head">Education</div>
-        <div class="edu-row">
-          <span class="edu-degree">
-            Bachelor of Law (LL.B.)
-            <span class="gpa-badge">GPA 3.65 / 4.0</span>
-          </span>
-          <span class="entry-dates">2026</span>
+      <div class="sec">
+        <div class="sec-title">Education</div>
+        <div class="edu-hd">
+          <span class="edu-degree">Bachelor of Law (LL.B.) <span class="gpa">GPA 3.65 / 4.0</span></span>
+          <span class="entry-date">2026</span>
         </div>
         <div class="edu-inst">Saudi Electronic University · Riyadh</div>
         <p class="edu-note">
-          <b>Graduation Research:</b> "The Legal Characterization of Finance Sale Contracts" — a doctrinal study of installment sales and purchase-linked consumer finance under the Saudi Civil Transactions Law, directly mapping the legislative framework that governs the BNPL model.
+          <b>Graduation Research:</b> "The Legal Characterization of Finance Sale Contracts" — examined the classification of installment sales and purchase-linked consumer finance under the Saudi Civil Transactions Law, directly mapping the legislative framework that governs the BNPL model in KSA.
         </p>
       </div>
 
-    </div><!-- /main-col -->
+    </main>
 
-    <!-- SIDE COLUMN -->
-    <div class="side-col">
+    <!-- SIDE COLUMN ──────────────────────────── -->
+    <aside class="side">
 
       <!-- CORE COMPETENCIES -->
-      <div class="side-section">
-        <div class="sec-head">Core Competencies</div>
+      <div class="sec">
+        <div class="sec-title">Core Skills</div>
 
-        <div class="skill-item">
-          <div class="skill-label">Legal Drafting</div>
-          <div class="skill-text">Commercial contracts, merchant agreements, NDAs, vendor terms</div>
+        <div class="skill-group">
+          <div class="skill-label">Commercial</div>
+          <div class="tags">
+            <span class="tag">Key Account Management</span>
+            <span class="tag">Merchant Partnerships</span>
+            <span class="tag">Commercial Negotiation</span>
+            <span class="tag">Enterprise Onboarding</span>
+          </div>
         </div>
 
-        <div class="skill-item">
-          <div class="skill-label">Fintech Regulatory</div>
-          <div class="skill-text">SAMA BNPL Rules · Finance Companies Control Law · consumer data protection</div>
+        <div class="skill-group">
+          <div class="skill-label">Contracts & Compliance</div>
+          <div class="tags">
+            <span class="tag">Contract Drafting Support</span>
+            <span class="tag">SAMA BNPL Rules</span>
+            <span class="tag">CLM</span>
+            <span class="tag">NDA Review</span>
+            <span class="tag">Compliance Awareness</span>
+          </div>
         </div>
 
-        <div class="skill-item">
-          <div class="skill-label">Contract Negotiation</div>
-          <div class="skill-text">Risk allocation, liability caps, termination clauses, deal structuring</div>
+        <div class="skill-group">
+          <div class="skill-label">Operations</div>
+          <div class="tags">
+            <span class="tag">BNPL Operations</span>
+            <span class="tag">Dispute Resolution</span>
+            <span class="tag">Fraud Management</span>
+            <span class="tag">CRM Workflow Design</span>
+            <span class="tag">Sales Operations</span>
+          </div>
         </div>
 
-        <div class="skill-item">
-          <div class="skill-label">Legal Operations</div>
-          <div class="skill-text">CLM design, obligation tracking, repository management, workflow automation</div>
-        </div>
-
-        <div class="skill-item">
-          <div class="skill-label">Risk &amp; Disputes</div>
-          <div class="skill-text">Fraud investigations, legal risk flagging, escalation management</div>
+        <div class="skill-group">
+          <div class="skill-label">Tools</div>
+          <p class="tag-plain">Zoho CRM &nbsp;·&nbsp; MS Office Suite</p>
         </div>
       </div>
 
       <!-- CERTIFICATIONS -->
-      <div class="side-section">
-        <div class="sec-head">Certifications</div>
+      <div class="sec">
+        <div class="sec-title">Certifications</div>
 
-        <div class="cert-item">
+        <div class="cert">
           <div class="cert-name">Project Management Professional (PMP)</div>
           <div class="cert-sub">PMI · 2025</div>
         </div>
 
-        <div class="cert-item">
+        <div class="cert">
           <div class="cert-name">Commercial Negotiation &amp; Contract Techniques</div>
-          <div class="cert-sub">Risk allocation · deal closing</div>
+          <div class="cert-sub">Risk allocation · deal structuring</div>
         </div>
 
-        <div class="cert-item">
-          <div class="cert-name">Zoho CRM — Legal Workflows</div>
-          <div class="cert-sub">CLM configuration · obligation tracking</div>
+        <div class="cert">
+          <div class="cert-name">Zoho CRM — Legal &amp; Operations Workflows</div>
+          <div class="cert-sub">CLM · obligation tracking · automation</div>
         </div>
       </div>
 
       <!-- LANGUAGES -->
-      <div class="side-section">
-        <div class="sec-head">Languages</div>
+      <div class="sec">
+        <div class="sec-title">Languages</div>
         <div class="lang-row">
           <span class="lang-name">Arabic</span>
-          <span class="lang-level">Native</span>
+          <span class="lang-badge">Native</span>
         </div>
         <div class="lang-row">
           <span class="lang-name">English</span>
-          <span class="lang-level">Professional</span>
+          <span class="lang-badge">Professional</span>
         </div>
       </div>
 
-      <!-- TOOLS -->
-      <div class="side-section">
-        <div class="sec-head">Tools</div>
-        <div class="skill-text">Zoho CRM &nbsp;·&nbsp; MS Office Suite</div>
-      </div>
+      <!-- TARGET ROLES NOTE — remove before sending -->
+      <!--
+        Target: KAM · Merchant Success · Partnerships Manager
+                Contracts Specialist · Legal Operations Assoc.
+                Compliance Associate · Business Operations
+                Fintech Operations — Tabby / Tamara / Lean / Noon
+      -->
 
-    </div><!-- /side-col -->
+    </aside>
 
   </div><!-- /body -->
 
