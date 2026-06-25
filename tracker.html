@@ -226,7 +226,7 @@
       <code>اسم العميل</code> &nbsp; <code>المندوب</code> &nbsp; <code>التاريخ</code> &nbsp; <code>الجوال</code> &nbsp; <code>ملاحظة</code><br>
       • العمود الأول (الاسم) والثاني (المندوب) إلزاميان، الباقي اختياري.<br>
       • <b>صف فيه تاريخ = اتفاقية صالحة. صف بدون تاريخ = منتهية وتحتاج إعادة إرسال.</b><br>
-      • التواريخ المقبولة: <code>2026-06-25</code> أو <code>25/06/2026</code> أو <code>25-6-2026</code>.
+      • التواريخ المقبولة (يوم/شهر/سنة): <code>25/06/2026</code> أو <code>25/06/2026 10:12 AM</code> أو <code>2026-06-25</code> — الوقت يُتجاهل ويُحسب ٣٠ يوم من التاريخ.
     </p>
     <input type="file" id="import-file" accept=".csv,.tsv,.txt" onchange="loadFile(this)" style="margin-bottom:10px">
     <textarea class="paste" id="import-text" placeholder="محل النخبة	أحمد بافيل	2026-06-20	0501234567	تم التوقيع&#10;مؤسسة الريان	يوسف باسبيت		0559876543	ينتظر موافقة المالك"></textarea>
@@ -307,20 +307,19 @@ function normAr(s){ return String(s||'').trim().replace(/\s+/g,' ').replace(/[أ
 
 function toast(msg, type){ const t=$('toast'); t.textContent=msg; t.className='toast show '+(type||''); setTimeout(()=>{ t.className='toast'; }, 2600); }
 
-/* تطبيع التاريخ لصيغة YYYY-MM-DD أو '' */
+/* تطبيع التاريخ لصيغة YYYY-MM-DD أو '' — يتجاهل الوقت ويقرأ يوم/شهر/سنة */
 function parseDate(raw){
   if(raw===null||raw===undefined) return '';
   let s=String(raw).trim();
-  if(!s || s==='-' || s==='—' || s==='بدون' ) return '';
-  // YYYY-MM-DD
-  let m=s.match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})$/);
-  if(m) return m[1]+'-'+m[2].padStart(2,'0')+'-'+m[3].padStart(2,'0');
-  // DD-MM-YYYY أو DD/MM/YYYY
-  m=s.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{4})$/);
-  if(m) return m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0');
-  // محاولة أخيرة عبر Date
-  const d=new Date(s);
-  if(!isNaN(d.getTime())) return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  if(!s || s==='-' || s==='—' || s==='بدون' || s==='_') return '';
+  // خذ جزء التاريخ فقط، وتجاهل الوقت مثل "10:12 AM"
+  let dp=s.split(/[\sـ،,T]+/)[0].trim();
+  // YYYY-MM-DD (أو مع شرطة/نقطة/سلاش)
+  let m=dp.match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})$/);
+  if(m){ const mo=+m[2], d=+m[3]; if(mo>=1&&mo<=12&&d>=1&&d<=31) return m[1]+'-'+String(mo).padStart(2,'0')+'-'+String(d).padStart(2,'0'); }
+  // DD/MM/YYYY (اليوم أولاً — الصيغة المستخدمة في الاتفاقيات)
+  m=dp.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{4})$/);
+  if(m){ const d=+m[1], mo=+m[2]; if(mo>=1&&mo<=12&&d>=1&&d<=31) return m[3]+'-'+String(mo).padStart(2,'0')+'-'+String(d).padStart(2,'0'); }
   return '';
 }
 
