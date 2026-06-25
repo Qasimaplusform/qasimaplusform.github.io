@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>متابعة الاتفاقيات — قسيمة بلس</title>
+<meta name="robots" content="noindex, nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --brand: #3B4DB0; --brand-dark: #2d3a8a; --brand-light: #eef0fb;
+    --text: #1a1a2e; --muted: #6b6b8a; --border: #dde0f5;
+    --bg: #f5f6ff; --white: #ffffff; --radius: 12px;
+    --err: #dc2626; --err-bg: #fef2f2; --err-border:#fecaca;
+    --ok: #16a34a; --ok-bg: #f0fdf4; --ok-border: #bbf7d0;
+    --warn: #d97706; --warn-bg:#fffbeb; --warn-border:#fde68a;
+  }
+  body { font-family: 'Tajawal', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 60px; }
+
+  /* Header */
+  .header { background: var(--brand); padding: 22px 20px; position: relative; overflow: hidden; }
+  .header::after { content:''; position:absolute; bottom:-80px; right:-30px; width:240px; height:240px; background:rgba(255,255,255,0.04); border-radius:50%; }
+  .header-inner { position:relative; z-index:1; max-width:1200px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+  .header h1 { color:white; font-size:20px; font-weight:800; display:flex; align-items:center; gap:10px; }
+  .header h1 .badge { background:rgba(255,255,255,0.15); font-size:11px; font-weight:600; padding:4px 10px; border-radius:20px; }
+  .header-actions { display:flex; gap:8px; flex-wrap:wrap; }
+  .hbtn { background:rgba(255,255,255,0.15); color:white; border:1px solid rgba(255,255,255,0.25); border-radius:10px; padding:8px 14px; font-size:13px; font-weight:600; font-family:inherit; cursor:pointer; transition:background .2s; display:inline-flex; align-items:center; gap:6px; }
+  .hbtn:hover { background:rgba(255,255,255,0.28); }
+  .sync-dot { width:8px; height:8px; border-radius:50%; background:#fbbf24; display:inline-block; }
+  .sync-dot.on { background:#4ade80; }
+  .sync-dot.off { background:#f87171; }
+
+  .wrap { max-width:1200px; margin:0 auto; padding:20px 16px; }
+
+  /* Cards */
+  .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-bottom:20px; }
+  .card { background:var(--white); border:1px solid var(--border); border-radius:14px; padding:16px; box-shadow:0 2px 14px rgba(59,77,176,0.05); cursor:pointer; transition:transform .12s, box-shadow .2s; position:relative; }
+  .card:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(59,77,176,0.12); }
+  .card.active { outline:2px solid var(--brand); outline-offset:1px; }
+  .card .num { font-size:30px; font-weight:800; line-height:1; }
+  .card .lbl { font-size:13px; color:var(--muted); margin-top:8px; font-weight:600; }
+  .card.c-total .num{color:var(--brand)} .card.c-valid .num{color:var(--ok)}
+  .card.c-soon .num{color:var(--warn)} .card.c-exp .num{color:var(--err)}
+  .card.c-signed .num{color:var(--brand-dark)} .card.c-pending .num{color:var(--muted)}
+
+  /* Toolbar */
+  .toolbar { display:flex; gap:10px; flex-wrap:wrap; align-items:center; background:var(--white); border:1px solid var(--border); border-radius:14px; padding:14px; margin-bottom:16px; }
+  .toolbar input[type=text], .toolbar select { border:1.5px solid var(--border); border-radius:10px; padding:10px 12px; font-family:inherit; font-size:14px; background:var(--bg); color:var(--text); outline:none; }
+  .toolbar input[type=text]:focus, .toolbar select:focus { border-color:var(--brand); background:#fff; }
+  .toolbar .search { flex:1; min-width:180px; }
+  .btn { border:none; border-radius:10px; padding:10px 16px; font-size:14px; font-weight:700; font-family:inherit; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:background .2s,transform .1s; }
+  .btn:active{ transform:scale(.97); }
+  .btn-primary { background:var(--brand); color:#fff; } .btn-primary:hover{ background:var(--brand-dark); }
+  .btn-soft { background:var(--brand-light); color:var(--brand-dark); } .btn-soft:hover{ background:#e2e6fb; }
+  .btn-ghost { background:#fff; color:var(--muted); border:1.5px solid var(--border); } .btn-ghost:hover{ border-color:var(--brand); color:var(--brand); }
+
+  /* Table */
+  .table-wrap { background:var(--white); border:1px solid var(--border); border-radius:14px; overflow:hidden; box-shadow:0 2px 14px rgba(59,77,176,0.05); }
+  .table-scroll { overflow-x:auto; }
+  table { width:100%; border-collapse:collapse; min-width:760px; }
+  th, td { text-align:right; padding:12px 14px; font-size:14px; border-bottom:1px solid var(--border); vertical-align:middle; }
+  th { background:var(--brand-light); color:var(--brand-dark); font-weight:700; font-size:13px; position:sticky; top:0; }
+  tbody tr:hover { background:#fafbff; }
+  td .cust { font-weight:700; }
+  td .sub { font-size:12px; color:var(--muted); margin-top:2px; }
+  .pill { display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:700; padding:5px 10px; border-radius:20px; white-space:nowrap; }
+  .pill.valid { background:var(--ok-bg); color:var(--ok); border:1px solid var(--ok-border); }
+  .pill.soon { background:var(--warn-bg); color:var(--warn); border:1px solid var(--warn-border); }
+  .pill.exp { background:var(--err-bg); color:var(--err); border:1px solid var(--err-border); }
+  .note-cell { max-width:240px; }
+  .note-input { width:100%; border:1px solid transparent; border-radius:8px; padding:7px 9px; font-family:inherit; font-size:13px; background:transparent; resize:vertical; min-height:36px; color:var(--text); transition:background .15s,border-color .15s; }
+  .note-cell:hover .note-input, .note-input:focus { background:var(--bg); border-color:var(--border); }
+  .note-input:focus { background:#fff; border-color:var(--brand); outline:none; }
+  .date-input { border:1.5px solid var(--border); border-radius:8px; padding:6px 8px; font-family:inherit; font-size:13px; background:var(--bg); color:var(--text); }
+  .row-actions { display:flex; gap:6px; }
+  .icon-btn { background:none; border:1px solid var(--border); border-radius:8px; width:32px; height:32px; cursor:pointer; font-size:14px; display:inline-flex; align-items:center; justify-content:center; color:var(--muted); transition:all .15s; }
+  .icon-btn:hover { border-color:var(--err); color:var(--err); background:var(--err-bg); }
+  .icon-btn.resend:hover { border-color:var(--brand); color:var(--brand); background:var(--brand-light); }
+  .empty { text-align:center; padding:50px 20px; color:var(--muted); }
+  .empty .big { font-size:40px; margin-bottom:12px; }
+
+  /* Report */
+  .report { background:var(--white); border:1px solid var(--border); border-radius:14px; padding:18px; margin-bottom:16px; box-shadow:0 2px 14px rgba(59,77,176,0.05); }
+  .report h3 { font-size:16px; color:var(--brand-dark); margin-bottom:4px; display:flex; align-items:center; gap:8px; }
+  .report .date { font-size:12px; color:var(--muted); margin-bottom:14px; }
+  .agent-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:12px; }
+  .agent-card { border:1px solid var(--border); border-radius:12px; padding:12px 14px; background:var(--bg); }
+  .agent-card .an { font-weight:700; font-size:14px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; }
+  .agent-card .an .total { font-size:12px; color:var(--muted); font-weight:600; }
+  .agent-stats { display:flex; gap:6px; flex-wrap:wrap; }
+  .chip { font-size:11px; font-weight:700; padding:4px 8px; border-radius:8px; }
+  .chip.v{ background:var(--ok-bg); color:var(--ok);} .chip.s{ background:var(--warn-bg); color:var(--warn);} .chip.e{ background:var(--err-bg); color:var(--err);}
+
+  /* Modal */
+  .modal-bg { display:none; position:fixed; inset:0; background:rgba(26,26,46,0.45); z-index:100; align-items:flex-start; justify-content:center; padding:30px 16px; overflow-y:auto; }
+  .modal-bg.show { display:flex; }
+  .modal { background:#fff; border-radius:18px; width:100%; max-width:560px; padding:24px; box-shadow:0 20px 60px rgba(0,0,0,0.25); }
+  .modal h2 { font-size:18px; color:var(--brand-dark); margin-bottom:16px; display:flex; align-items:center; justify-content:space-between; }
+  .modal h2 .x { cursor:pointer; color:var(--muted); font-size:22px; line-height:1; }
+  .modal label { display:block; font-size:13px; font-weight:600; color:var(--muted); margin:12px 0 6px; }
+  .modal input, .modal select, .modal textarea { width:100%; border:1.5px solid var(--border); border-radius:10px; padding:11px 12px; font-family:inherit; font-size:14px; background:var(--bg); color:var(--text); outline:none; }
+  .modal input:focus, .modal select:focus, .modal textarea:focus { border-color:var(--brand); background:#fff; }
+  .modal .row2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .modal-actions { display:flex; gap:10px; margin-top:20px; }
+  .modal-actions .btn { flex:1; justify-content:center; }
+  .help { font-size:12px; color:var(--muted); line-height:1.7; margin-bottom:10px; }
+  .help code { background:var(--brand-light); padding:1px 6px; border-radius:6px; font-size:12px; }
+  textarea.paste { min-height:160px; resize:vertical; font-family:monospace; direction:ltr; text-align:left; font-size:12px; }
+  .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(80px); background:var(--text); color:#fff; padding:12px 22px; border-radius:12px; font-size:14px; font-weight:600; z-index:200; opacity:0; transition:all .3s; box-shadow:0 8px 30px rgba(0,0,0,0.3); }
+  .toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
+  .toast.ok{ background:#15803d; } .toast.err{ background:var(--err); }
+  .banner { background:var(--warn-bg); border:1px solid var(--warn-border); color:#92400e; padding:12px 16px; border-radius:12px; margin-bottom:16px; font-size:13px; display:flex; align-items:center; gap:10px; }
+  .banner a { color:var(--brand); font-weight:700; cursor:pointer; text-decoration:underline; }
+  @media (max-width:600px){ .header h1{font-size:17px;} .card .num{font-size:24px;} }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <h1>📋 متابعة الاتفاقيات <span class="badge">قسيمة بلس</span></h1>
+    <div class="header-actions">
+      <button class="hbtn" onclick="refreshCloud()"><span class="sync-dot" id="sync-dot"></span> <span id="sync-label">مزامنة</span></button>
+      <button class="hbtn" onclick="openImport()">⬆️ استيراد</button>
+      <button class="hbtn" onclick="exportCSV()">⬇️ تصدير</button>
+      <button class="hbtn" onclick="openSettings()">⚙️ الإعدادات</button>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="banner" id="setup-banner" style="display:none">
+    ⚠️ <div>المزامنة غير مفعّلة — البيانات محفوظة في هذا الجهاز فقط. <a onclick="openSettings()">فعّل المزامنة عبر Google</a> لمشاركتها مع الفريق ومتابعتها من أي جهاز.</div>
+  </div>
+
+  <!-- بطاقات الإحصائيات -->
+  <div class="cards" id="cards">
+    <div class="card c-total"   data-filter="all"     onclick="setFilter('all')"><div class="num" id="n-total">0</div><div class="lbl">إجمالي العملاء</div></div>
+    <div class="card c-valid"   data-filter="valid"   onclick="setFilter('valid')"><div class="num" id="n-valid">0</div><div class="lbl">اتفاقيات صالحة</div></div>
+    <div class="card c-soon"    data-filter="soon"    onclick="setFilter('soon')"><div class="num" id="n-soon">0</div><div class="lbl">قاربت الانتهاء</div></div>
+    <div class="card c-exp"     data-filter="expired" onclick="setFilter('expired')"><div class="num" id="n-exp">0</div><div class="lbl">منتهية / إعادة إرسال</div></div>
+    <div class="card c-pending" data-filter="pending" onclick="setFilter('pending')"><div class="num" id="n-pending">0</div><div class="lbl">باقي بدون توقيع</div></div>
+  </div>
+
+  <!-- التقرير اليومي -->
+  <div class="report">
+    <h3>📊 تقرير المتابعة حسب المندوب</h3>
+    <div class="date" id="report-date"></div>
+    <div class="agent-grid" id="agent-grid"></div>
+  </div>
+
+  <!-- شريط الأدوات -->
+  <div class="toolbar">
+    <input type="text" class="search" id="search" placeholder="🔍 ابحث باسم العميل أو الجوال..." oninput="render()">
+    <select id="filter-agent" onchange="render()"><option value="">كل المناديب</option></select>
+    <select id="filter-status" onchange="syncStatusSelect()">
+      <option value="all">كل الحالات</option>
+      <option value="valid">صالحة فقط</option>
+      <option value="soon">قاربت الانتهاء</option>
+      <option value="expired">منتهية / إعادة إرسال</option>
+      <option value="pending">باقي بدون توقيع</option>
+    </select>
+    <button class="btn btn-primary" onclick="openAdd()">＋ إضافة عميل</button>
+  </div>
+
+  <!-- الجدول -->
+  <div class="table-wrap">
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>العميل</th>
+            <th>المندوب</th>
+            <th>تاريخ الاتفاقية</th>
+            <th>الحالة</th>
+            <th>ملاحظة / المشكلة</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+    <div class="empty" id="empty" style="display:none">
+      <div class="big">📭</div>
+      <div>لا توجد اتفاقيات مطابقة. اضغط <b>استيراد</b> للصق قائمتك أو <b>إضافة عميل</b>.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: إضافة/تعديل عميل -->
+<div class="modal-bg" id="modal-edit">
+  <div class="modal">
+    <h2><span id="edit-title">إضافة عميل</span><span class="x" onclick="closeModal('modal-edit')">×</span></h2>
+    <input type="hidden" id="e-id">
+    <label>اسم العميل / المحل *</label>
+    <input type="text" id="e-customer" placeholder="مثال: محل قطع غيار النخبة">
+    <div class="row2">
+      <div>
+        <label>المندوب *</label>
+        <select id="e-agent"></select>
+      </div>
+      <div>
+        <label>الجوال</label>
+        <input type="text" id="e-phone" placeholder="05XXXXXXXX" inputmode="numeric">
+      </div>
+    </div>
+    <label>تاريخ الاتفاقية <span style="font-weight:400">(اتركه فارغاً = منتهية وتحتاج إعادة إرسال)</span></label>
+    <input type="date" id="e-date">
+    <label>ملاحظة / حالة العميل / المشكلة</label>
+    <textarea id="e-note" rows="3" placeholder="مثال: ينتظر موافقة المالك / رقم خاطئ / تم الإرسال بانتظار التوقيع..."></textarea>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('modal-edit')">إلغاء</button>
+      <button class="btn btn-primary" onclick="saveEdit()">حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: استيراد -->
+<div class="modal-bg" id="modal-import">
+  <div class="modal">
+    <h2><span>استيراد الاتفاقيات</span><span class="x" onclick="closeModal('modal-import')">×</span></h2>
+    <p class="help">
+      انسخ الأعمدة من Excel والصقها هنا (أو ارفع ملف CSV). الترتيب المتوقع للأعمدة:<br>
+      <code>اسم العميل</code> &nbsp; <code>المندوب</code> &nbsp; <code>التاريخ</code> &nbsp; <code>الجوال</code> &nbsp; <code>ملاحظة</code><br>
+      • العمود الأول (الاسم) والثاني (المندوب) إلزاميان، الباقي اختياري.<br>
+      • <b>صف فيه تاريخ = اتفاقية صالحة. صف بدون تاريخ = منتهية وتحتاج إعادة إرسال.</b><br>
+      • التواريخ المقبولة: <code>2026-06-25</code> أو <code>25/06/2026</code> أو <code>25-6-2026</code>.
+    </p>
+    <input type="file" id="import-file" accept=".csv,.tsv,.txt" onchange="loadFile(this)" style="margin-bottom:10px">
+    <textarea class="paste" id="import-text" placeholder="محل النخبة	أحمد بافيل	2026-06-20	0501234567	تم التوقيع&#10;مؤسسة الريان	يوسف باسبيت		0559876543	ينتظر موافقة المالك"></textarea>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('modal-import')">إلغاء</button>
+      <button class="btn btn-primary" onclick="doImport()">استيراد وتصنيف</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: الإعدادات -->
+<div class="modal-bg" id="modal-settings">
+  <div class="modal">
+    <h2><span>الإعدادات والمزامنة</span><span class="x" onclick="closeModal('modal-settings')">×</span></h2>
+    <p class="help">
+      لمزامنة البيانات عبر Google (لتشوفها من أي جهاز وتشاركها مع الفريق):<br>
+      ١. افتح Google Sheets جديد ثم <code>Extensions → Apps Script</code>.<br>
+      ٢. الصق كود <code>agreements.gs</code> الموجود في مجلد <code>apps-script</code> بالمستودع.<br>
+      ٣. اضغط <code>Deploy → New deployment → Web app</code>، واختر <code>Anyone</code>.<br>
+      ٤. انسخ رابط <code>/exec</code> والصقه هنا.
+    </p>
+    <label>رابط Apps Script (/exec)</label>
+    <input type="text" id="s-endpoint" placeholder="https://script.google.com/macros/s/.../exec">
+    <label>مدة صلاحية الاتفاقية (بالأيام)</label>
+    <input type="number" id="s-validity" value="30" min="1" max="365">
+    <label>تنبيه قرب الانتهاء (بالأيام)</label>
+    <input type="number" id="s-soon" value="5" min="1" max="60">
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('modal-settings')">إلغاء</button>
+      <button class="btn btn-primary" onclick="saveSettings()">حفظ</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ====== قائمة المناديب (نفس قائمة فورم الانضمام) ====== */
+const AGENTS = [
+  { code: "tawil",     name: "أحمد بن طويل",   email: "a.bintawil@autobia.sa" },
+  { code: "yousef",    name: "يوسف باسبيت",    email: "y.basubeit@autobia.sa" },
+  { code: "bafail",    name: "أحمد بافيل",     email: "a.bafail@autobia.sa" },
+  { code: "rahman",    name: "عبدالرحمن علي",  email: "a.ali@autobia.sa" },
+  { code: "hamed",     name: "حامد باهادي",    email: "h.bahadi@autobia.sa" },
+  { code: "saeed",     name: "علي سعيد",       email: "a.saeed@autobia.sa" },
+  { code: "ahali",     name: "أحمد علي",       email: "ah.ali@autobia.sa" },
+  { code: "kamili",    name: "طارق كاملي",     email: "t.kamili@autobia.sa" },
+  { code: "faqihi",    name: "عبده فقيهي",     email: "a.fageehi@autobia.sa" },
+  { code: "asiri",     name: "عبدالله عسيري",  email: "a.asiri@autobia.sa" },
+  { code: "hakim",     name: "محمد حاكم",      email: "m.rajab@autobia.sa" },
+  { code: "ammar",     name: "عمار سعيد",      email: "a.karsh@autobia.sa" },
+  { code: "mustafa",   name: "مصطفى العلي",    email: "m.alali@autobia.sa" },
+  { code: "thamer",    name: "ثامر الخنبشي",   email: "t.alkhanbashi@autobia.sa" },
+  { code: "hijris",    name: "عبدالله الهجرس", email: "a.alhijris@autobia.sa" },
+  { code: "adel",      name: "عادل العمودي",   email: "a.alamoudi@autobia.sa" },
+  { code: "aziz",      name: "عبدالعزيز رقيق", email: "a.arquiq@autobia.sa" },
+  { code: "wael",      name: "وائل بن طالب",   email: "w.bintalib@autobia.sa" },
+  { code: "muthanna",  name: "وائل مثنى",      email: "w.muthanna@autobia.sa" },
+  { code: "yasir",     name: "ياسر شيف",       email: "y.shaif@autobia.sa" },
+  { code: "khanbashi", name: "طارق الخنبشي",   email: "ta.alkhanbashi@autobia.sa" },
+  { code: "rakan",     name: "راكان الزهراني", email: "r.alzahrani@autobia.sa" },
+  { code: "baessa",    name: "محمد باعيسى",    email: "m.baessa@autobia.sa" },
+  { code: "baher",     name: "باهر",           email: "baher@autobia.sa" },
+];
+
+const SECRET = 'qplus2026';
+const LS_DATA = 'qplus_agreements_v1';
+const LS_CFG  = 'qplus_tracker_cfg_v1';
+
+let records = [];   // {id, customer, agentCode, agentName, date, phone, note, updatedAt}
+let cfg = { endpoint:'', validity:30, soon:5 };
+let activeFilter = 'all';
+
+/* ====== أدوات مساعدة ====== */
+function $(id){ return document.getElementById(id); }
+function todayStr(){ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function normAr(s){ return String(s||'').trim().replace(/\s+/g,' ').replace(/[أإآ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه'); }
+
+function toast(msg, type){ const t=$('toast'); t.textContent=msg; t.className='toast show '+(type||''); setTimeout(()=>{ t.className='toast'; }, 2600); }
+
+/* تطبيع التاريخ لصيغة YYYY-MM-DD أو '' */
+function parseDate(raw){
+  if(raw===null||raw===undefined) return '';
+  let s=String(raw).trim();
+  if(!s || s==='-' || s==='—' || s==='بدون' ) return '';
+  // YYYY-MM-DD
+  let m=s.match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})$/);
+  if(m) return m[1]+'-'+m[2].padStart(2,'0')+'-'+m[3].padStart(2,'0');
+  // DD-MM-YYYY أو DD/MM/YYYY
+  m=s.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{4})$/);
+  if(m) return m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0');
+  // محاولة أخيرة عبر Date
+  const d=new Date(s);
+  if(!isNaN(d.getTime())) return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  return '';
+}
+
+/* حساب حالة الاتفاقية */
+function statusOf(rec){
+  if(!rec.date) return { key:'pending', label:'باقي — بدون توقيع', cls:'exp', days:null };
+  const start=new Date(rec.date+'T00:00:00');
+  if(isNaN(start.getTime())) return { key:'pending', label:'باقي — بدون توقيع', cls:'exp', days:null };
+  const exp=new Date(start); exp.setDate(exp.getDate()+cfg.validity);
+  const now=new Date(todayStr()+'T00:00:00');
+  const days=Math.round((exp-now)/86400000);
+  if(days<0) return { key:'expired', label:'منتهية — إعادة إرسال', cls:'exp', days };
+  if(days<=cfg.soon) return { key:'soon', label:'قاربت الانتهاء ('+days+' يوم)', cls:'soon', days };
+  return { key:'valid', label:'صالحة ('+days+' يوم متبقي)', cls:'valid', days };
+}
+
+function findAgentByName(name){
+  const n=normAr(name);
+  return AGENTS.find(a=> normAr(a.name)===n) ||
+         AGENTS.find(a=> normAr(a.name).includes(n) || n.includes(normAr(a.name))) || null;
+}
+
+/* ====== التخزين المحلي ====== */
+function saveLocal(){ try{ localStorage.setItem(LS_DATA, JSON.stringify(records)); }catch(e){} }
+function loadLocal(){ try{ const r=localStorage.getItem(LS_DATA); if(r) records=JSON.parse(r); }catch(e){ records=[]; } }
+function saveCfg(){ try{ localStorage.setItem(LS_CFG, JSON.stringify(cfg)); }catch(e){} }
+function loadCfg(){ try{ const r=localStorage.getItem(LS_CFG); if(r) cfg=Object.assign(cfg, JSON.parse(r)); }catch(e){} }
+
+/* ====== المزامنة السحابية (JSONP) ====== */
+function jsonp(params, timeout){
+  return new Promise((resolve,reject)=>{
+    if(!cfg.endpoint){ reject(new Error('no-endpoint')); return; }
+    const cb='cb_'+Date.now()+'_'+Math.floor(Math.random()*1e6);
+    const s=document.createElement('script');
+    let done=false;
+    const tm=setTimeout(()=>{ if(!done){ cleanup(); reject(new Error('timeout')); } }, timeout||12000);
+    window[cb]=(data)=>{ done=true; clearTimeout(tm); resolve(data); cleanup(); };
+    function cleanup(){ try{ delete window[cb]; }catch(e){} if(s.parentNode) s.remove(); }
+    s.onerror=()=>{ if(!done){ clearTimeout(tm); cleanup(); reject(new Error('network')); } };
+    const q=new URLSearchParams(Object.assign({}, params, { key:SECRET, callback:cb })).toString();
+    s.src=cfg.endpoint+'?'+q;
+    document.body.appendChild(s);
+  });
+}
+function setSync(state){ // 'on' | 'off' | '' (idle/unknown)
+  const dot=$('sync-dot'); dot.className='sync-dot '+(state||'');
+  $('setup-banner').style.display = cfg.endpoint ? 'none' : 'flex';
+}
+async function refreshCloud(){
+  if(!cfg.endpoint){ openSettings(); return; }
+  $('sync-label').textContent='جارٍ...';
+  try{
+    const res=await jsonp({ action:'list' });
+    if(res && res.ok && Array.isArray(res.records)){
+      records=res.records.map(r=>({ id:r.id, customer:r.customer||'', agentCode:r.agentCode||'', agentName:r.agentName||'',
+        date:r.date||'', phone:r.phone||'', note:r.note||'', updatedAt:r.updatedAt||'' }));
+      saveLocal(); render(); setSync('on'); toast('تمت المزامنة ('+records.length+' عميل)','ok');
+    } else { setSync('off'); toast('تعذّرت المزامنة','err'); }
+  }catch(e){ setSync('off'); toast(e.message==='timeout'?'انتهت مهلة الاتصال':'تعذّر الاتصال بالمزامنة','err'); }
+  $('sync-label').textContent='مزامنة';
+}
+async function cloudUpsert(rec){
+  if(!cfg.endpoint) return;
+  try{ await jsonp({ action:'upsert', id:rec.id, customer:rec.customer, agentCode:rec.agentCode,
+        agentName:rec.agentName, date:rec.date, phone:rec.phone, note:rec.note, updatedAt:rec.updatedAt }); setSync('on'); }
+  catch(e){ setSync('off'); }
+}
+async function cloudDelete(id){
+  if(!cfg.endpoint) return;
+  try{ await jsonp({ action:'delete', id }); setSync('on'); }catch(e){ setSync('off'); }
+}
+async function cloudBulk(recs){
+  if(!cfg.endpoint) return false;
+  try{
+    await fetch(cfg.endpoint, { method:'POST', mode:'no-cors',
+      headers:{ 'Content-Type':'text/plain;charset=utf-8' },
+      body: JSON.stringify({ key:SECRET, action:'bulk', records:recs }) });
+    return true;
+  }catch(e){ return false; }
+}
+
+/* ====== إنشاء المعرّف ====== */
+function makeId(customer, phone){ return normAr(customer)+'|'+String(phone||'').replace(/\D/g,''); }
+
+/* ====== العرض ====== */
+function render(){
+  // تعبئة فلتر المناديب مرة واحدة
+  const fa=$('filter-agent');
+  if(fa.options.length<=1){ AGENTS.forEach(a=>{ const o=document.createElement('option'); o.value=a.code; o.textContent=a.name; fa.appendChild(o); }); }
+  const ea=$('e-agent');
+  if(ea && ea.options.length===0){ AGENTS.forEach(a=>{ const o=document.createElement('option'); o.value=a.code; o.textContent=a.name; ea.appendChild(o); }); }
+
+  const q=normAr($('search').value);
+  const fAgent=$('filter-agent').value;
+
+  // إحصائيات
+  let nValid=0,nSoon=0,nExp=0,nPending=0;
+  records.forEach(r=>{ const st=statusOf(r);
+    if(st.key==='valid')nValid++; else if(st.key==='soon')nSoon++;
+    else if(st.key==='expired')nExp++; else if(st.key==='pending')nPending++; });
+  $('n-total').textContent=records.length;
+  $('n-valid').textContent=nValid; $('n-soon').textContent=nSoon;
+  $('n-exp').textContent=nExp; $('n-pending').textContent=nPending;
+
+  // تقرير المناديب
+  $('report-date').textContent='تاريخ اليوم: '+todayStr();
+  const byAgent={};
+  records.forEach(r=>{ const key=r.agentCode||r.agentName||'غير محدد';
+    if(!byAgent[key]) byAgent[key]={ name:r.agentName||agentName(r.agentCode)||'غير محدد', valid:0, soon:0, exp:0, pending:0, total:0 };
+    const st=statusOf(r); byAgent[key].total++;
+    if(st.key==='valid')byAgent[key].valid++; else if(st.key==='soon')byAgent[key].soon++;
+    else if(st.key==='expired')byAgent[key].exp++; else byAgent[key].pending++; });
+  const grid=$('agent-grid');
+  const keys=Object.keys(byAgent).sort((a,b)=> (byAgent[b].exp+byAgent[b].pending)-(byAgent[a].exp+byAgent[a].pending));
+  grid.innerHTML = keys.length? keys.map(k=>{ const g=byAgent[k];
+    return '<div class="agent-card"><div class="an"><span>'+esc(g.name)+'</span><span class="total">'+g.total+' عميل</span></div>'+
+      '<div class="agent-stats">'+
+      (g.valid?'<span class="chip v">صالحة '+g.valid+'</span>':'')+
+      (g.soon?'<span class="chip s">قاربت '+g.soon+'</span>':'')+
+      ((g.exp+g.pending)?'<span class="chip e">للمتابعة '+(g.exp+g.pending)+'</span>':'')+
+      '</div></div>';
+  }).join('') : '<div style="color:var(--muted);font-size:13px">لا توجد بيانات بعد.</div>';
+
+  // الصفوف
+  const rows=records.filter(r=>{
+    if(fAgent && r.agentCode!==fAgent) return false;
+    if(q && !(normAr(r.customer).includes(q) || String(r.phone||'').includes(q))) return false;
+    if(activeFilter!=='all'){ const st=statusOf(r); if(st.key!==activeFilter) return false; }
+    return true;
+  }).sort((a,b)=>{ // الأهم أولاً: منتهية/باقي ثم قاربت ثم صالحة
+    const order={expired:0,pending:1,soon:2,valid:3};
+    return order[statusOf(a).key]-order[statusOf(b).key];
+  });
+
+  const tb=$('tbody');
+  tb.innerHTML=rows.map(r=>{ const st=statusOf(r);
+    return '<tr>'+
+      '<td><div class="cust">'+esc(r.customer)+'</div>'+(r.phone?'<div class="sub">📱 '+esc(r.phone)+'</div>':'')+'</td>'+
+      '<td>'+esc(r.agentName||agentName(r.agentCode)||'—')+'</td>'+
+      '<td><input type="date" class="date-input" value="'+esc(r.date)+'" onchange="changeDate(\''+jsEsc(r.id)+'\',this.value)"></td>'+
+      '<td><span class="pill '+st.cls+'">'+st.label+'</span></td>'+
+      '<td class="note-cell"><textarea class="note-input" rows="1" placeholder="اكتب ملاحظة..." onblur="changeNote(\''+jsEsc(r.id)+'\',this.value)">'+esc(r.note)+'</textarea></td>'+
+      '<td><div class="row-actions">'+
+        '<button class="icon-btn resend" title="تعديل" onclick="openEdit(\''+jsEsc(r.id)+'\')">✏️</button>'+
+        '<button class="icon-btn" title="حذف" onclick="delRecord(\''+jsEsc(r.id)+'\')">🗑️</button>'+
+      '</div></td>'+
+    '</tr>';
+  }).join('');
+  $('empty').style.display = rows.length? 'none':'block';
+  document.querySelectorAll('.card').forEach(c=> c.classList.toggle('active', c.dataset.filter===activeFilter));
+}
+function agentName(code){ const a=AGENTS.find(x=>x.code===code); return a?a.name:''; }
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function jsEsc(s){ return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
+
+/* ====== الفلاتر ====== */
+function setFilter(f){ activeFilter=f; $('filter-status').value=f; render(); }
+function syncStatusSelect(){ activeFilter=$('filter-status').value; render(); }
+
+/* ====== تعديل سريع ====== */
+function changeDate(id,val){ const r=records.find(x=>x.id===id); if(!r)return; r.date=parseDate(val); r.updatedAt=todayStr(); saveLocal(); render(); cloudUpsert(r); }
+function changeNote(id,val){ const r=records.find(x=>x.id===id); if(!r)return; if(r.note===val)return; r.note=val; r.updatedAt=todayStr(); saveLocal(); cloudUpsert(r); toast('تم حفظ الملاحظة','ok'); }
+function delRecord(id){ const r=records.find(x=>x.id===id); if(!r)return; if(!confirm('حذف "'+r.customer+'"؟'))return; records=records.filter(x=>x.id!==id); saveLocal(); render(); cloudDelete(id); }
+
+/* ====== المودالات ====== */
+function openModal(id){ $(id).classList.add('show'); }
+function closeModal(id){ $(id).classList.remove('show'); }
+function openAdd(){ $('edit-title').textContent='إضافة عميل'; $('e-id').value=''; $('e-customer').value=''; $('e-phone').value=''; $('e-date').value=''; $('e-note').value=''; if($('e-agent').options.length===0) render(); $('e-agent').value=AGENTS[0].code; openModal('modal-edit'); }
+function openEdit(id){ const r=records.find(x=>x.id===id); if(!r)return; $('edit-title').textContent='تعديل عميل'; $('e-id').value=r.id; $('e-customer').value=r.customer; $('e-phone').value=r.phone||''; $('e-date').value=r.date||''; $('e-note').value=r.note||''; $('e-agent').value=r.agentCode||AGENTS[0].code; openModal('modal-edit'); }
+function saveEdit(){
+  const customer=$('e-customer').value.trim();
+  if(!customer){ toast('اكتب اسم العميل','err'); return; }
+  const agentCode=$('e-agent').value; const ag=AGENTS.find(a=>a.code===agentCode);
+  const phone=$('e-phone').value.trim();
+  const oldId=$('e-id').value;
+  const date=parseDate($('e-date').value);
+  let rec;
+  if(oldId){ rec=records.find(x=>x.id===oldId); }
+  if(!rec){ const id=makeId(customer,phone); if(records.some(x=>x.id===id)){ toast('هذا العميل مضاف مسبقاً','err'); return; } rec={ id }; records.push(rec); }
+  rec.customer=customer; rec.agentCode=agentCode; rec.agentName=ag?ag.name:''; rec.phone=phone; rec.date=date; rec.note=$('e-note').value.trim(); rec.updatedAt=todayStr();
+  saveLocal(); render(); cloudUpsert(rec); closeModal('modal-edit'); toast('تم الحفظ','ok');
+}
+
+/* ====== الاستيراد ====== */
+function openImport(){ $('import-text').value=''; $('import-file').value=''; openModal('modal-import'); }
+function loadFile(input){ const f=input.files[0]; if(!f)return; const r=new FileReader(); r.onload=e=>{ $('import-text').value=e.target.result; }; r.readAsText(f,'UTF-8'); }
+function splitLine(line){ // كشف الفاصل: tab أولاً ثم comma
+  if(line.indexOf('\t')>=0) return line.split('\t');
+  // CSV بسيط مع دعم علامات الاقتباس
+  const out=[]; let cur='',q=false;
+  for(let i=0;i<line.length;i++){ const c=line[i];
+    if(c==='"'){ if(q&&line[i+1]==='"'){cur+='"';i++;} else q=!q; }
+    else if(c===','&&!q){ out.push(cur); cur=''; }
+    else cur+=c; }
+  out.push(cur); return out;
+}
+function doImport(){
+  const txt=$('import-text').value.trim();
+  if(!txt){ toast('الصق البيانات أولاً','err'); return; }
+  const lines=txt.split(/\r?\n/).filter(l=>l.trim());
+  let added=0, updated=0; const touched=[];
+  const headerHint=/عميل|مندوب|تاريخ|جوال|اسم/.test(lines[0]) && !/\d{2}/.test(lines[0]);
+  const start=headerHint?1:0;
+  for(let i=start;i<lines.length;i++){
+    const c=splitLine(lines[i]).map(x=>x.trim());
+    const customer=c[0]; if(!customer) continue;
+    const agentRaw=c[1]||''; const ag=findAgentByName(agentRaw);
+    const date=parseDate(c[2]||''); const phone=(c[3]||'').replace(/[^\d]/g,''); const note=c[4]||'';
+    const id=makeId(customer,phone);
+    let rec=records.find(x=>x.id===id);
+    if(rec){ rec.agentCode=ag?ag.code:rec.agentCode; rec.agentName=ag?ag.name:(agentRaw||rec.agentName); if(date)rec.date=date; if(phone)rec.phone=phone; if(note)rec.note=note; rec.updatedAt=todayStr(); updated++; }
+    else { rec={ id, customer, agentCode:ag?ag.code:'', agentName:ag?ag.name:agentRaw, date, phone, note, updatedAt:todayStr() }; records.push(rec); added++; }
+    touched.push(rec);
+  }
+  saveLocal(); render(); closeModal('modal-import');
+  toast('تم: '+added+' جديد، '+updated+' محدّث','ok');
+  if(cfg.endpoint && touched.length){ cloudBulk(touched).then(ok=>{ if(ok) setSync('on'); }); }
+}
+
+/* ====== التصدير ====== */
+function exportCSV(){
+  const head=['اسم العميل','المندوب','التاريخ','الجوال','الحالة','ملاحظة'];
+  const rows=records.map(r=>{ const st=statusOf(r);
+    return [r.customer, r.agentName||agentName(r.agentCode), r.date, r.phone, st.label, (r.note||'').replace(/\n/g,' ')]; });
+  const csv='﻿'+[head].concat(rows).map(row=> row.map(v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"').join(',')).join('\r\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='agreements_'+todayStr()+'.csv'; a.click();
+}
+
+/* ====== الإعدادات ====== */
+function openSettings(){ $('s-endpoint').value=cfg.endpoint||''; $('s-validity').value=cfg.validity; $('s-soon').value=cfg.soon; openModal('modal-settings'); }
+function saveSettings(){
+  cfg.endpoint=$('s-endpoint').value.trim();
+  cfg.validity=Math.max(1, parseInt($('s-validity').value,10)||30);
+  cfg.soon=Math.max(1, parseInt($('s-soon').value,10)||5);
+  saveCfg(); closeModal('modal-settings'); setSync(cfg.endpoint?'':'off'); render();
+  if(cfg.endpoint){ toast('تم الحفظ — جارٍ المزامنة','ok'); refreshCloud(); }
+  else toast('تم حفظ الإعدادات','ok');
+}
+
+/* إغلاق المودال بالضغط على الخلفية */
+document.querySelectorAll('.modal-bg').forEach(bg=> bg.addEventListener('click', e=>{ if(e.target===bg) bg.classList.remove('show'); }));
+
+/* ====== الإقلاع ====== */
+(function init(){
+  loadCfg(); loadLocal(); render(); setSync(cfg.endpoint?'':'off');
+  if(cfg.endpoint) refreshCloud();
+})();
+</script>
+</body>
+</html>
