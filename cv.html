@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>عمر غناج — السيرة الذاتية | Omar Ghannaj — CV</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --brand: #1f2b54; --brand-2: #3B4DB0; --brand-light: #eef0fb; --accent: #c9a14a;
+    --text: #1a1a2e; --muted: #6b6b7e; --line: #e6e8f0;
+    --bg: #eef0f6; --white: #ffffff; --sidebar: #1f2b54;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Tajawal', sans-serif;
+    background: var(--bg); color: var(--text);
+    min-height: 100vh; padding: 24px 14px 60px; line-height: 1.6;
+  }
+  body[dir="ltr"] { font-family: 'Inter', sans-serif; }
+
+  /* Language switch */
+  .lang-bar { max-width: 880px; margin: 0 auto 18px; display: flex; justify-content: flex-end; gap: 8px; }
+  .lang-btn {
+    border: 1.5px solid var(--brand-2); background: var(--white); color: var(--brand-2);
+    font-family: inherit; font-weight: 700; font-size: 13px; padding: 8px 18px;
+    border-radius: 999px; cursor: pointer; transition: all .18s; letter-spacing: .3px;
+  }
+  .lang-btn:hover { background: var(--brand-light); }
+  .lang-btn.active { background: var(--brand-2); color: #fff; box-shadow: 0 6px 16px rgba(59,77,176,.3); }
+  .print-btn {
+    border: 1.5px solid var(--line); background: var(--white); color: var(--muted);
+    font-family: inherit; font-weight: 700; font-size: 13px; padding: 8px 16px;
+    border-radius: 999px; cursor: pointer; transition: all .18s; margin-inline-end: auto;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .print-btn:hover { color: var(--brand-2); border-color: var(--brand-2); }
+
+  /* Sheet */
+  .sheet {
+    max-width: 880px; margin: 0 auto; background: var(--white);
+    border-radius: 18px; overflow: hidden; display: grid;
+    grid-template-columns: 300px 1fr;
+    box-shadow: 0 18px 60px rgba(31,43,84,.16);
+  }
+
+  /* Sidebar */
+  .side { background: var(--sidebar); color: #e9ecf6; padding: 40px 26px; }
+  .side .name { color: #fff; font-size: 30px; font-weight: 800; line-height: 1.2; letter-spacing: -.5px; }
+  .side .role { color: var(--accent); font-size: 14px; font-weight: 600; margin-top: 10px; line-height: 1.7; }
+  .side-block { margin-top: 30px; }
+  .side-title {
+    font-size: 13px; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 1px;
+    padding-bottom: 8px; margin-bottom: 14px; border-bottom: 2px solid rgba(201,161,74,.5);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .contact-item { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; margin-bottom: 11px; color: #cdd3e6; word-break: break-word; }
+  .contact-item .ico { color: var(--accent); flex-shrink: 0; width: 16px; text-align: center; }
+  .info-row { font-size: 13px; margin-bottom: 11px; }
+  .info-row .k { color: #9aa3c4; display: block; font-size: 11px; margin-bottom: 1px; }
+  .info-row .v { color: #fff; font-weight: 500; }
+  .lang-row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 9px; color: #cdd3e6; }
+  .lang-row .lvl { color: var(--accent); font-weight: 600; }
+  .skills { display: flex; flex-wrap: wrap; gap: 7px; }
+  .skill {
+    background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12);
+    color: #e4e8f4; font-size: 12px; font-weight: 500; padding: 5px 11px; border-radius: 8px;
+  }
+
+  /* Main */
+  .main { padding: 40px 34px; }
+  .sec { margin-bottom: 30px; }
+  .sec:last-child { margin-bottom: 0; }
+  .sec-title {
+    font-size: 17px; font-weight: 800; color: var(--brand); letter-spacing: -.3px;
+    display: flex; align-items: center; gap: 10px; margin-bottom: 18px;
+  }
+  .sec-title::after { content: ''; flex: 1; height: 2px; background: var(--line); border-radius: 2px; }
+  .sec-title .dot { width: 28px; height: 28px; background: var(--brand-2); border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; color: #fff; font-size: 15px; }
+
+  .summary { font-size: 14.5px; color: #3c3c52; line-height: 1.85; }
+
+  .job { position: relative; padding-inline-start: 20px; margin-bottom: 22px; border-inline-start: 2px solid var(--line); }
+  .job:last-child { margin-bottom: 0; }
+  .job::before { content: ''; position: absolute; inset-inline-start: -7px; top: 4px; width: 12px; height: 12px; background: var(--brand-2); border: 3px solid #fff; border-radius: 50%; box-shadow: 0 0 0 1px var(--line); }
+  .job-top { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px; align-items: baseline; }
+  .job-title { font-size: 15.5px; font-weight: 700; color: var(--text); }
+  .job-date { font-size: 12px; color: var(--muted); font-weight: 600; white-space: nowrap; }
+  .job-org { font-size: 13.5px; color: var(--brand-2); font-weight: 600; margin: 2px 0 9px; }
+  .job ul { list-style: none; }
+  .job li { font-size: 13.5px; color: #4a4a60; margin-bottom: 6px; padding-inline-start: 18px; position: relative; line-height: 1.65; }
+  .job li::before { content: '◗'; position: absolute; inset-inline-start: 0; color: var(--accent); font-size: 11px; top: 3px; }
+
+  .edu-title { font-size: 15px; font-weight: 700; color: var(--text); }
+  .edu-meta { font-size: 13px; color: var(--muted); margin-top: 3px; }
+
+  [data-id] { display: none; }
+  body[dir="ltr"] [data-ar] { display: none; }
+  body[dir="ltr"] [data-id] { display: revert; }
+
+  @media (max-width: 720px) {
+    .sheet { grid-template-columns: 1fr; }
+    .side { padding: 32px 24px; }
+    .main { padding: 32px 22px; }
+    .side .name { font-size: 26px; }
+  }
+  @media print {
+    body { background: #fff; padding: 0; }
+    .lang-bar { display: none; }
+    .sheet { box-shadow: none; border-radius: 0; max-width: 100%; }
+  }
+</style>
+</head>
+<body dir="rtl">
+
+<div class="lang-bar">
+  <button class="print-btn" onclick="window.print()" title="طباعة / Cetak">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+    <span data-ar>طباعة / PDF</span><span data-id>Cetak / PDF</span>
+  </button>
+  <button class="lang-btn active" id="btn-ar" onclick="setLang('ar')">العربية</button>
+  <button class="lang-btn" id="btn-id" onclick="setLang('id')">Indonesia</button>
+</div>
+
+<div class="sheet">
+
+  <!-- Sidebar -->
+  <aside class="side">
+    <div>
+      <div class="name"><span data-ar>عمر غنّاج</span><span data-id>Omar Ghannaj</span></div>
+      <div class="role">
+        <span data-ar>مشرف عمليات · كابتن أوردر · مندوب مبيعات</span>
+        <span data-id>Supervisor Operasional · Kapten Order · Perwakilan Penjualan</span>
+      </div>
+    </div>
+
+    <div class="side-block">
+      <div class="side-title"><span data-ar>معلومات التواصل</span><span data-id>Kontak</span></div>
+      <div class="contact-item"><span class="ico">📍</span><span><span data-ar>المدينة المنورة 41311</span><span data-id>Madinah 41311, Arab Saudi</span></span></div>
+      <div class="contact-item"><span class="ico">📞</span><span dir="ltr">0536681507</span></div>
+      <div class="contact-item"><span class="ico">✉️</span><span dir="ltr">omar_hassan321@icloud.com</span></div>
+    </div>
+
+    <div class="side-block">
+      <div class="side-title"><span data-ar>المعلومات الشخصية</span><span data-id>Data Pribadi</span></div>
+      <div class="info-row"><span class="k"><span data-ar>تاريخ الميلاد</span><span data-id>Tanggal Lahir</span></span><span class="v" dir="ltr">2005 / 04 / 05</span></div>
+      <div class="info-row"><span class="k"><span data-ar>الجنسية</span><span data-id>Kewarganegaraan</span></span><span class="v"><span data-ar>سوري</span><span data-id>Suriah</span></span></div>
+      <div class="info-row"><span class="k"><span data-ar>حالة الإقامة</span><span data-id>Status Domisili</span></span><span class="v"><span data-ar>إقامة سارية المفعول</span><span data-id>Izin Tinggal Berlaku</span></span></div>
+      <div class="info-row"><span class="k"><span data-ar>الحالة الاجتماعية</span><span data-id>Status Pernikahan</span></span><span class="v"><span data-ar>أعزب</span><span data-id>Lajang</span></span></div>
+    </div>
+
+    <div class="side-block">
+      <div class="side-title"><span data-ar>اللغات</span><span data-id>Bahasa</span></div>
+      <div class="lang-row"><span><span data-ar>العربية</span><span data-id>Arab</span></span><span class="lvl"><span data-ar>لغة أم</span><span data-id>Penutur Asli</span></span></div>
+      <div class="lang-row"><span><span data-ar>الإنجليزية</span><span data-id>Inggris</span></span><span class="lvl"><span data-ar>جيد</span><span data-id>Baik</span></span></div>
+    </div>
+
+    <div class="side-block">
+      <div class="side-title"><span data-ar>المهارات</span><span data-id>Keterampilan</span></div>
+      <div class="skills">
+        <span class="skill"><span data-ar>خدمة العملاء</span><span data-id>Layanan Pelanggan</span></span>
+        <span class="skill"><span data-ar>إدارة الطلبات</span><span data-id>Manajemen Pesanan</span></span>
+        <span class="skill"><span data-ar>العمل الجماعي</span><span data-id>Kerja Sama Tim</span></span>
+        <span class="skill"><span data-ar>حل المشكلات</span><span data-id>Pemecahan Masalah</span></span>
+        <span class="skill"><span data-ar>إدارة الوقت</span><span data-id>Manajemen Waktu</span></span>
+        <span class="skill"><span data-ar>المبيعات الميدانية</span><span data-id>Penjualan Lapangan</span></span>
+        <span class="skill"><span data-ar>الأنظمة الرقمية</span><span data-id>Sistem Digital</span></span>
+        <span class="skill"><span data-ar>التواصل الفعّال</span><span data-id>Komunikasi Efektif</span></span>
+        <span class="skill"><span data-ar>العمل تحت الضغط</span><span data-id>Bekerja di Bawah Tekanan</span></span>
+        <span class="skill"><span data-ar>الانضباط والالتزام</span><span data-id>Disiplin & Komitmen</span></span>
+        <span class="skill"><span data-ar>إدارة فريق العمل</span><span data-id>Kepemimpinan Tim</span></span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+
+    <section class="sec">
+      <div class="sec-title"><span class="dot">★</span><span data-ar>الملخص المهني</span><span data-id>Ringkasan Profesional</span></div>
+      <p class="summary" data-ar>أمتلك خبرة عملية تجاوزت أربع سنوات في قطاعي خدمة الطعام والمبيعات الميدانية، تدرّجت خلالها من بائع إلى كابتن أوردر وكاشير ثم مشرف على فريق العمل. أتميّز بمهارات قوية في خدمة العملاء وإدارة الطلبات والعمل تحت الضغط، وأسعى للانضمام إلى بيئة احترافية تُمكّنني من تقديم قيمة حقيقية والاستمرار في النمو الوظيفي.</p>
+      <p class="summary" data-id>Saya memiliki pengalaman langsung lebih dari empat tahun di sektor layanan makanan dan penjualan lapangan, berkembang dari seorang pramuniaga menjadi kapten order dan kasir, lalu menjadi supervisor tim. Saya memiliki keterampilan kuat dalam layanan pelanggan, manajemen pesanan, dan bekerja di bawah tekanan, serta ingin bergabung dengan lingkungan profesional yang memungkinkan saya memberikan nilai nyata dan terus berkembang.</p>
+    </section>
+
+    <section class="sec">
+      <div class="sec-title"><span class="dot">💼</span><span data-ar>الخبرة المهنية</span><span data-id>Pengalaman Kerja</span></div>
+
+      <div class="job">
+        <div class="job-top">
+          <span class="job-title"><span data-ar>بائع</span><span data-id>Pramuniaga</span></span>
+          <span class="job-date"><span data-ar>نوفمبر 2021 — سبتمبر 2022</span><span data-id>Nov 2021 — Sep 2022</span></span>
+        </div>
+        <div class="job-org"><span data-ar>حلويات روز · المدينة المنورة</span><span data-id>Toko Manisan Rose · Madinah</span></div>
+        <ul>
+          <li><span data-ar>خدمة العملاء وتلبية احتياجاتهم بدقة ولياقة.</span><span data-id>Melayani pelanggan dan memenuhi kebutuhan mereka dengan cermat dan sopan.</span></li>
+          <li><span data-ar>إدارة عمليات البيع وضبط المدفوعات اليومية.</span><span data-id>Mengelola operasi penjualan dan merekonsiliasi pembayaran harian.</span></li>
+          <li><span data-ar>الحفاظ على ترتيب المنتجات وجاذبية واجهة العرض.</span><span data-id>Menjaga penataan produk dan tampilan etalase yang menarik.</span></li>
+        </ul>
+      </div>
+
+      <div class="job">
+        <div class="job-top">
+          <span class="job-title"><span data-ar>كابتن أوردر / كاشير ← مشرف عمليات</span><span data-id>Kapten Order / Kasir → Supervisor Operasional</span></span>
+          <span class="job-date"><span data-ar>سبتمبر 2022 — أغسطس 2025</span><span data-id>Sep 2022 — Agu 2025</span></span>
+        </div>
+        <div class="job-org"><span data-ar>مطعم زمان جدي · المدينة المنورة</span><span data-id>Restoran Zaman Jaddi · Madinah</span></div>
+        <ul>
+          <li><span data-ar>تدرّج وظيفي من كابتن أوردر وكاشير إلى مشرف على الفريق.</span><span data-id>Berkembang dari kapten order dan kasir menjadi supervisor tim.</span></li>
+          <li><span data-ar>استقبال طلبات العملاء وإدخالها عبر الأنظمة الرقمية ومتابعة تنفيذها حتى التسليم.</span><span data-id>Menerima pesanan pelanggan, memasukkannya melalui sistem digital, dan memantaunya hingga pengantaran.</span></li>
+          <li><span data-ar>إدارة عمليات الكاشير والتحقق من المدفوعات وضبط الحسابات اليومية.</span><span data-id>Menjalankan operasi kasir, memverifikasi pembayaran, dan menyeimbangkan akun harian.</span></li>
+          <li><span data-ar>الإشراف على تنسيق المهام بين أفراد الفريق وضمان جودة الخدمة.</span><span data-id>Mengawasi koordinasi tugas antar anggota tim dan memastikan kualitas layanan.</span></li>
+          <li><span data-ar>التعامل مع شكاوى العملاء واستفساراتهم بسرعة واحترافية.</span><span data-id>Menangani keluhan dan pertanyaan pelanggan dengan cepat dan profesional.</span></li>
+          <li><span data-ar>المشاركة في تنظيم بوفيهات الفعاليات والمناسبات الخارجية.</span><span data-id>Membantu mengatur prasmanan untuk acara dan kegiatan di luar lokasi.</span></li>
+        </ul>
+      </div>
+
+      <div class="job">
+        <div class="job-top">
+          <span class="job-title"><span data-ar>مندوب مبيعات ميداني</span><span data-id>Perwakilan Penjualan Lapangan</span></span>
+          <span class="job-date"><span data-ar>سبتمبر 2025 — سبتمبر 2026</span><span data-id>Sep 2025 — Sep 2026</span></span>
+        </div>
+        <div class="job-org"><span data-ar>مصنع الأكواب الورقية · المدينة المنورة</span><span data-id>Pabrik Gelas Kertas · Madinah</span></div>
+        <ul>
+          <li><span data-ar>تسويق وبيع منتجات الأكواب الورقية لعملاء الجملة والتجزئة في المنطقة.</span><span data-id>Memasarkan dan menjual produk gelas kertas kepada pelanggan grosir dan eceran di wilayah tersebut.</span></li>
+          <li><span data-ar>بناء علاقات تجارية مستدامة مع العملاء والحفاظ على ولائهم.</span><span data-id>Membangun hubungan bisnis berkelanjutan dan menjaga loyalitas pelanggan.</span></li>
+          <li><span data-ar>تحقيق أهداف المبيعات الشهرية ومتابعة طلبات التوريد والتسليم.</span><span data-id>Mencapai target penjualan bulanan dan menindaklanjuti pesanan pasokan serta pengiriman.</span></li>
+          <li><span data-ar>تقديم عروض المنتجات والحلول المناسبة لاحتياجات العملاء.</span><span data-id>Menyajikan penawaran produk dan solusi yang sesuai dengan kebutuhan pelanggan.</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-title"><span class="dot">🎓</span><span data-ar>المؤهل العلمي</span><span data-id>Pendidikan</span></div>
+      <div class="edu-title"><span data-ar>شهادة الثانوية العامة</span><span data-id>Ijazah Sekolah Menengah Atas (SMA)</span></div>
+      <div class="edu-meta"><span data-ar>المدينة المنورة · 2022</span><span data-id>Madinah · 2022</span></div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  function setLang(lang) {
+    var isAr = lang === 'ar';
+    document.body.setAttribute('dir', isAr ? 'rtl' : 'ltr');
+    document.documentElement.setAttribute('lang', isAr ? 'ar' : 'id');
+    document.getElementById('btn-ar').classList.toggle('active', isAr);
+    document.getElementById('btn-id').classList.toggle('active', !isAr);
+    document.title = isAr ? 'عمر غنّاج — السيرة الذاتية' : 'Omar Ghannaj — CV';
+  }
+</script>
+</body>
+</html>
