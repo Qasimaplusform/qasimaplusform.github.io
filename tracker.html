@@ -336,10 +336,26 @@ function statusOf(rec){
   return { key:'valid', label:'صالحة ('+days+' يوم متبقي)', cls:'valid', days };
 }
 
+function latin(s){ return String(s||'').toLowerCase().replace(/[^a-z]/g,''); }
 function findAgentByName(name){
-  const n=normAr(name);
-  return AGENTS.find(a=> normAr(a.name)===n) ||
-         AGENTS.find(a=> normAr(a.name).includes(n) || n.includes(normAr(a.name))) || null;
+  const raw=String(name||'').trim(); if(!raw) return null;
+  // مطابقة عربية (مطابق تام ثم احتواء)
+  const n=normAr(raw);
+  let a=AGENTS.find(x=> normAr(x.name)===n);
+  if(a) return a;
+  if(n.length>=3){ a=AGENTS.find(x=> normAr(x.name).includes(n) || n.includes(normAr(x.name))); if(a) return a; }
+  // مطابقة الأسماء الإنجليزية عبر اسم عائلة المندوب المستخرج من بريده
+  const inp=latin(raw); if(inp.length<3) return null;
+  let best=null, score=0;
+  AGENTS.forEach(x=>{
+    const parts=x.email.split('@')[0].toLowerCase().split(/[._\-]/);
+    const toks=[];
+    parts.forEach(t=>{ if(t.length>=4) toks.push(t); const m=t.replace(/^(bin|bint|al|el|abu)/,''); if(m.length>=4 && m!==t) toks.push(m); });
+    if(x.en) toks.push(latin(x.en));
+    let s=0; toks.forEach(t=>{ if(inp.includes(t) && t.length>s) s=t.length; });
+    if(s>score){ score=s; best=x; }
+  });
+  return score>=4 ? best : null;
 }
 
 /* ====== التخزين المحلي ====== */
@@ -406,9 +422,14 @@ function makeId(customer, phone){ return normAr(customer)+'|'+String(phone||'').
 
 /* ====== العرض ====== */
 function render(){
-  // تعبئة فلتر المناديب مرة واحدة
+  // فلتر المناديب: المناديب المعروفون + أي اسم مندوب ظاهر في البيانات
   const fa=$('filter-agent');
-  if(fa.options.length<=1){ AGENTS.forEach(a=>{ const o=document.createElement('option'); o.value=a.code; o.textContent=a.name; fa.appendChild(o); }); }
+  const curFa=fa.value;
+  const names=[]; const seen={};
+  AGENTS.forEach(a=>{ if(!seen[a.name]){ seen[a.name]=1; names.push(a.name); } });
+  records.forEach(r=>{ const nm=r.agentName||agentName(r.agentCode); if(nm && !seen[nm]){ seen[nm]=1; names.push(nm); } });
+  fa.innerHTML='<option value="">كل المناديب</option>'+names.map(nm=>'<option value="'+esc(nm)+'">'+esc(nm)+'</option>').join('');
+  fa.value=curFa;
   const ea=$('e-agent');
   if(ea && ea.options.length===0){ AGENTS.forEach(a=>{ const o=document.createElement('option'); o.value=a.code; o.textContent=a.name; ea.appendChild(o); }); }
 
@@ -427,8 +448,8 @@ function render(){
   // تقرير المناديب
   $('report-date').textContent='تاريخ اليوم: '+todayStr();
   const byAgent={};
-  records.forEach(r=>{ const key=r.agentCode||r.agentName||'غير محدد';
-    if(!byAgent[key]) byAgent[key]={ name:r.agentName||agentName(r.agentCode)||'غير محدد', valid:0, soon:0, exp:0, pending:0, total:0 };
+  records.forEach(r=>{ const key=r.agentName||agentName(r.agentCode)||'غير محدد';
+    if(!byAgent[key]) byAgent[key]={ name:key, valid:0, soon:0, exp:0, pending:0, total:0 };
     const st=statusOf(r); byAgent[key].total++;
     if(st.key==='valid')byAgent[key].valid++; else if(st.key==='soon')byAgent[key].soon++;
     else if(st.key==='expired')byAgent[key].exp++; else byAgent[key].pending++; });
@@ -445,7 +466,7 @@ function render(){
 
   // الصفوف
   const rows=records.filter(r=>{
-    if(fAgent && r.agentCode!==fAgent) return false;
+    if(fAgent && (r.agentName||agentName(r.agentCode))!==fAgent) return false;
     if(q && !(normAr(r.customer).includes(q) || String(r.phone||'').includes(q))) return false;
     if(activeFilter!=='all'){ const st=statusOf(r); if(st.key!==activeFilter) return false; }
     return true;
@@ -521,7 +542,7 @@ function doImport(){
   if(!txt){ toast('الصق البيانات أولاً','err'); return; }
   const lines=txt.split(/\r?\n/).filter(l=>l.trim());
   let added=0, updated=0; const touched=[];
-  const headerHint=/عميل|مندوب|تاريخ|جوال|اسم/.test(lines[0]) && !/\d{2}/.test(lines[0]);
+  const headerHint=/deal|name|agent|date|sales|phone|note|عميل|مندوب|تاريخ|جوال|اسم|ملاحظ/i.test(lines[0]) && !/\d{4}/.test(lines[0]);
   const start=headerHint?1:0;
   for(let i=start;i<lines.length;i++){
     const c=splitLine(lines[i]).map(x=>x.trim());
