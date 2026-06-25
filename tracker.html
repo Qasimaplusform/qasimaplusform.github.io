@@ -40,9 +40,9 @@
   .card.active { outline:2px solid var(--brand); outline-offset:1px; }
   .card .num { font-size:30px; font-weight:800; line-height:1; }
   .card .lbl { font-size:13px; color:var(--muted); margin-top:8px; font-weight:600; }
-  .card.c-total .num{color:var(--brand)} .card.c-valid .num{color:var(--ok)}
-  .card.c-soon .num{color:var(--warn)} .card.c-exp .num{color:var(--err)}
-  .card.c-signed .num{color:var(--brand-dark)} .card.c-pending .num{color:var(--muted)}
+  .card.c-total .num{color:var(--brand)} .card.c-wait .num{color:var(--ok)}
+  .card.c-risk .num{color:var(--err)} .card.c-lost .num{color:#6b6b8a}
+  .card.c-nodate .num{color:#c2410c}
 
   /* Toolbar */
   .toolbar { display:flex; gap:10px; flex-wrap:wrap; align-items:center; background:var(--white); border:1px solid var(--border); border-radius:14px; padding:14px; margin-bottom:16px; }
@@ -65,9 +65,10 @@
   td .cust { font-weight:700; }
   td .sub { font-size:12px; color:var(--muted); margin-top:2px; }
   .pill { display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:700; padding:5px 10px; border-radius:20px; white-space:nowrap; }
-  .pill.valid { background:var(--ok-bg); color:var(--ok); border:1px solid var(--ok-border); }
-  .pill.soon { background:var(--warn-bg); color:var(--warn); border:1px solid var(--warn-border); }
-  .pill.exp { background:var(--err-bg); color:var(--err); border:1px solid var(--err-border); }
+  .pill.wait { background:var(--ok-bg); color:var(--ok); border:1px solid var(--ok-border); }
+  .pill.risk { background:var(--err-bg); color:var(--err); border:1px solid var(--err-border); }
+  .pill.lost { background:#f1f1f6; color:#6b6b8a; border:1px solid #d8d8e6; }
+  .pill.nodate { background:#fff7ed; color:#c2410c; border:1px solid #fed7aa; }
   .note-cell { max-width:240px; }
   .note-input { width:100%; border:1px solid transparent; border-radius:8px; padding:7px 9px; font-family:inherit; font-size:13px; background:transparent; resize:vertical; min-height:36px; color:var(--text); transition:background .15s,border-color .15s; }
   .note-cell:hover .note-input, .note-input:focus { background:var(--bg); border-color:var(--border); }
@@ -90,7 +91,7 @@
   .agent-card .an .total { font-size:12px; color:var(--muted); font-weight:600; }
   .agent-stats { display:flex; gap:6px; flex-wrap:wrap; }
   .chip { font-size:11px; font-weight:700; padding:4px 8px; border-radius:8px; }
-  .chip.v{ background:var(--ok-bg); color:var(--ok);} .chip.s{ background:var(--warn-bg); color:var(--warn);} .chip.e{ background:var(--err-bg); color:var(--err);}
+  .chip.v{ background:var(--ok-bg); color:var(--ok);} .chip.r{ background:var(--err-bg); color:var(--err);} .chip.l{ background:#f1f1f6; color:#6b6b8a;}
 
   /* Modal */
   .modal-bg { display:none; position:fixed; inset:0; background:rgba(26,26,46,0.45); z-index:100; align-items:flex-start; justify-content:center; padding:30px 16px; overflow-y:auto; }
@@ -137,11 +138,11 @@
 
   <!-- بطاقات الإحصائيات -->
   <div class="cards" id="cards">
-    <div class="card c-total"   data-filter="all"     onclick="setFilter('all')"><div class="num" id="n-total">0</div><div class="lbl">إجمالي العملاء</div></div>
-    <div class="card c-valid"   data-filter="valid"   onclick="setFilter('valid')"><div class="num" id="n-valid">0</div><div class="lbl">اتفاقيات صالحة</div></div>
-    <div class="card c-soon"    data-filter="soon"    onclick="setFilter('soon')"><div class="num" id="n-soon">0</div><div class="lbl">قاربت الانتهاء</div></div>
-    <div class="card c-exp"     data-filter="expired" onclick="setFilter('expired')"><div class="num" id="n-exp">0</div><div class="lbl">منتهية / إعادة إرسال</div></div>
-    <div class="card c-pending" data-filter="pending" onclick="setFilter('pending')"><div class="num" id="n-pending">0</div><div class="lbl">باقي بدون توقيع</div></div>
+    <div class="card c-total" data-filter="all"  onclick="setFilter('all')"><div class="num" id="n-total">0</div><div class="lbl">إجمالي الاتفاقيات</div></div>
+    <div class="card c-wait"  data-filter="wait" onclick="setFilter('wait')"><div class="num" id="n-wait">0</div><div class="lbl">قيد الانتظار للتوقيع</div></div>
+    <div class="card c-risk"  data-filter="risk" onclick="setFilter('risk')"><div class="num" id="n-risk">0</div><div class="lbl">🔴 مهددة (٥ أيام أو أقل)</div></div>
+    <div class="card c-lost"  data-filter="lost" onclick="setFilter('lost')"><div class="num" id="n-lost">0</div><div class="lbl">منتهية / لوست</div></div>
+    <div class="card c-nodate" data-filter="nodate" onclick="setFilter('nodate')" id="card-nodate" style="display:none"><div class="num" id="n-nodate">0</div><div class="lbl">بدون تاريخ ⚠️</div></div>
   </div>
 
   <!-- التقرير اليومي -->
@@ -157,10 +158,10 @@
     <select id="filter-agent" onchange="render()"><option value="">كل المناديب</option></select>
     <select id="filter-status" onchange="syncStatusSelect()">
       <option value="all">كل الحالات</option>
-      <option value="valid">صالحة فقط</option>
-      <option value="soon">قاربت الانتهاء</option>
-      <option value="expired">منتهية / إعادة إرسال</option>
-      <option value="pending">باقي بدون توقيع</option>
+      <option value="wait">قيد الانتظار للتوقيع</option>
+      <option value="risk">🔴 مهددة (٥ أيام أو أقل)</option>
+      <option value="lost">منتهية / لوست</option>
+      <option value="nodate">بدون تاريخ ⚠️</option>
     </select>
     <button class="btn btn-primary" onclick="openAdd()">＋ إضافة عميل</button>
   </div>
@@ -307,33 +308,34 @@ function normAr(s){ return String(s||'').trim().replace(/\s+/g,' ').replace(/[أ
 
 function toast(msg, type){ const t=$('toast'); t.textContent=msg; t.className='toast show '+(type||''); setTimeout(()=>{ t.className='toast'; }, 2600); }
 
-/* تطبيع التاريخ لصيغة YYYY-MM-DD أو '' — يتجاهل الوقت ويقرأ يوم/شهر/سنة */
+/* تطبيع التاريخ لصيغة YYYY-MM-DD أو '' — يتجاهل الوقت ويقرأ التاريخ من أي مكان في النص */
 function parseDate(raw){
   if(raw===null||raw===undefined) return '';
-  let s=String(raw).trim();
+  let s=String(raw).replace(/ /g,' ').trim();
   if(!s || s==='-' || s==='—' || s==='بدون' || s==='_') return '';
-  // خذ جزء التاريخ فقط، وتجاهل الوقت مثل "10:12 AM"
-  let dp=s.split(/[\sـ،,T]+/)[0].trim();
-  // YYYY-MM-DD (أو مع شرطة/نقطة/سلاش)
-  let m=dp.match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})$/);
-  if(m){ const mo=+m[2], d=+m[3]; if(mo>=1&&mo<=12&&d>=1&&d<=31) return m[1]+'-'+String(mo).padStart(2,'0')+'-'+String(d).padStart(2,'0'); }
-  // DD/MM/YYYY (اليوم أولاً — الصيغة المستخدمة في الاتفاقيات)
-  m=dp.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{4})$/);
-  if(m){ const d=+m[1], mo=+m[2]; if(mo>=1&&mo<=12&&d>=1&&d<=31) return m[3]+'-'+String(mo).padStart(2,'0')+'-'+String(d).padStart(2,'0'); }
+  const iso=(y,mo,d)=> mo>=1&&mo<=12&&d>=1&&d<=31 ? y+'-'+String(mo).padStart(2,'0')+'-'+String(d).padStart(2,'0') : '';
+  // YYYY-MM-DD في أي موضع (مع أو بدون وقت)
+  let m=s.match(/(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})/);
+  if(m){ const r=iso(+m[1],+m[2],+m[3]); if(r) return r; }
+  // DD/MM/YYYY في أي موضع (اليوم أولاً — الصيغة المستخدمة في الاتفاقيات)
+  m=s.match(/(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{4})/);
+  if(m){ const r=iso(+m[3],+m[2],+m[1]); if(r) return r; }
+  // رقم Excel التسلسلي للتاريخ (احتياطي)
+  if(/^\d{4,6}(\.\d+)?$/.test(s)){ const n=parseFloat(s); if(n>20000&&n<80000){ const dt=new Date(Date.UTC(1899,11,30)+Math.round(n)*86400000); return iso(dt.getUTCFullYear(),dt.getUTCMonth()+1,dt.getUTCDate()); } }
   return '';
 }
 
-/* حساب حالة الاتفاقية */
+/* حساب حالة الاتفاقية — ٣ حالات حسب (تاريخ الإنشاء + مدة الصلاحية) */
 function statusOf(rec){
-  if(!rec.date) return { key:'pending', label:'باقي — بدون توقيع', cls:'exp', days:null };
+  if(!rec.date) return { key:'nodate', label:'بدون تاريخ ⚠️', cls:'nodate', days:null };
   const start=new Date(rec.date+'T00:00:00');
-  if(isNaN(start.getTime())) return { key:'pending', label:'باقي — بدون توقيع', cls:'exp', days:null };
+  if(isNaN(start.getTime())) return { key:'nodate', label:'بدون تاريخ ⚠️', cls:'nodate', days:null };
   const exp=new Date(start); exp.setDate(exp.getDate()+cfg.validity);
   const now=new Date(todayStr()+'T00:00:00');
   const days=Math.round((exp-now)/86400000);
-  if(days<0) return { key:'expired', label:'منتهية — إعادة إرسال', cls:'exp', days };
-  if(days<=cfg.soon) return { key:'soon', label:'قاربت الانتهاء ('+days+' يوم)', cls:'soon', days };
-  return { key:'valid', label:'صالحة ('+days+' يوم متبقي)', cls:'valid', days };
+  if(days<0)        return { key:'lost', label:'منتهية — العميل لوست', cls:'lost', days };
+  if(days<=cfg.soon)return { key:'risk', label:'مهددة — باقي '+days+' يوم', cls:'risk', days };
+  return                   { key:'wait', label:'قيد الانتظار للتوقيع ('+days+' يوم)', cls:'wait', days };
 }
 
 function latin(s){ return String(s||'').toLowerCase().replace(/[^a-z]/g,''); }
@@ -437,30 +439,33 @@ function render(){
   const fAgent=$('filter-agent').value;
 
   // إحصائيات
-  let nValid=0,nSoon=0,nExp=0,nPending=0;
+  let nWait=0,nRisk=0,nLost=0,nNo=0;
   records.forEach(r=>{ const st=statusOf(r);
-    if(st.key==='valid')nValid++; else if(st.key==='soon')nSoon++;
-    else if(st.key==='expired')nExp++; else if(st.key==='pending')nPending++; });
+    if(st.key==='wait')nWait++; else if(st.key==='risk')nRisk++;
+    else if(st.key==='lost')nLost++; else nNo++; });
   $('n-total').textContent=records.length;
-  $('n-valid').textContent=nValid; $('n-soon').textContent=nSoon;
-  $('n-exp').textContent=nExp; $('n-pending').textContent=nPending;
+  $('n-wait').textContent=nWait; $('n-risk').textContent=nRisk;
+  $('n-lost').textContent=nLost; $('n-nodate').textContent=nNo;
+  $('card-nodate').style.display = nNo? 'block':'none';
 
   // تقرير المناديب
   $('report-date').textContent='تاريخ اليوم: '+todayStr();
   const byAgent={};
   records.forEach(r=>{ const key=r.agentName||agentName(r.agentCode)||'غير محدد';
-    if(!byAgent[key]) byAgent[key]={ name:key, valid:0, soon:0, exp:0, pending:0, total:0 };
+    if(!byAgent[key]) byAgent[key]={ name:key, wait:0, risk:0, lost:0, no:0, total:0 };
     const st=statusOf(r); byAgent[key].total++;
-    if(st.key==='valid')byAgent[key].valid++; else if(st.key==='soon')byAgent[key].soon++;
-    else if(st.key==='expired')byAgent[key].exp++; else byAgent[key].pending++; });
+    if(st.key==='wait')byAgent[key].wait++; else if(st.key==='risk')byAgent[key].risk++;
+    else if(st.key==='lost')byAgent[key].lost++; else byAgent[key].no++; });
   const grid=$('agent-grid');
-  const keys=Object.keys(byAgent).sort((a,b)=> (byAgent[b].exp+byAgent[b].pending)-(byAgent[a].exp+byAgent[a].pending));
+  // الأكثر إلحاحاً أولاً: عدد المهددة ثم المنتهية
+  const keys=Object.keys(byAgent).sort((a,b)=> (byAgent[b].risk*100+byAgent[b].lost)-(byAgent[a].risk*100+byAgent[a].lost));
   grid.innerHTML = keys.length? keys.map(k=>{ const g=byAgent[k];
-    return '<div class="agent-card"><div class="an"><span>'+esc(g.name)+'</span><span class="total">'+g.total+' عميل</span></div>'+
+    return '<div class="agent-card"><div class="an"><span>'+esc(g.name)+'</span><span class="total">'+g.total+' اتفاقية</span></div>'+
       '<div class="agent-stats">'+
-      (g.valid?'<span class="chip v">صالحة '+g.valid+'</span>':'')+
-      (g.soon?'<span class="chip s">قاربت '+g.soon+'</span>':'')+
-      ((g.exp+g.pending)?'<span class="chip e">للمتابعة '+(g.exp+g.pending)+'</span>':'')+
+      (g.wait?'<span class="chip v">انتظار '+g.wait+'</span>':'')+
+      (g.risk?'<span class="chip r">🔴 مهددة '+g.risk+'</span>':'')+
+      (g.lost?'<span class="chip l">لوست '+g.lost+'</span>':'')+
+      (g.no?'<span class="chip l">بدون تاريخ '+g.no+'</span>':'')+
       '</div></div>';
   }).join('') : '<div style="color:var(--muted);font-size:13px">لا توجد بيانات بعد.</div>';
 
@@ -470,8 +475,8 @@ function render(){
     if(q && !(normAr(r.customer).includes(q) || String(r.phone||'').includes(q))) return false;
     if(activeFilter!=='all'){ const st=statusOf(r); if(st.key!==activeFilter) return false; }
     return true;
-  }).sort((a,b)=>{ // الأهم أولاً: منتهية/باقي ثم قاربت ثم صالحة
-    const order={expired:0,pending:1,soon:2,valid:3};
+  }).sort((a,b)=>{ // الأهم أولاً: مهددة ثم لوست ثم بدون تاريخ ثم قيد الانتظار
+    const order={risk:0,lost:1,nodate:2,wait:3};
     return order[statusOf(a).key]-order[statusOf(b).key];
   });
 
