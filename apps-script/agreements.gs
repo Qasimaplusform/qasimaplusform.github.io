@@ -18,7 +18,7 @@
 
 var SECRET = 'qplus2026';
 var SHEET_NAME = 'Agreements';
-var HEADERS = ['id','customer','agentCode','agentName','date','phone','note','updatedAt'];
+var HEADERS = ['id','customer','agentCode','agentName','date','phone','note','signed','signedAt','updatedAt'];
 
 function getSheet_() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -40,7 +40,8 @@ function readAll_() {
     out.push({
       id: String(r[0]), customer: r[1], agentCode: r[2], agentName: r[3],
       date: r[4] ? formatDate_(r[4]) : '', phone: r[5] ? String(r[5]) : '',
-      note: r[6], updatedAt: r[7] ? formatDate_(r[7]) : ''
+      note: r[6], signed: (r[7] === 'نعم' || r[7] === true || r[7] === 'true'),
+      signedAt: r[8] ? formatDate_(r[8]) : '', updatedAt: r[9] ? formatDate_(r[9]) : ''
     });
   }
   return out;
@@ -56,8 +57,10 @@ function formatDate_(v) {
 function upsert_(rec) {
   var sh = getSheet_();
   var values = sh.getDataRange().getValues();
+  var signedVal = (rec.signed === true || rec.signed === 'نعم' || rec.signed === 'true') ? 'نعم' : '';
   var row = [rec.id, rec.customer || '', rec.agentCode || '', rec.agentName || '',
-            rec.date || '', rec.phone ? "'" + rec.phone : '', rec.note || '', rec.updatedAt || ''];
+            rec.date || '', rec.phone ? "'" + rec.phone : '', rec.note || '',
+            signedVal, rec.signedAt || '', rec.updatedAt || ''];
   for (var i = 1; i < values.length; i++) {
     if (String(values[i][0]) === String(rec.id)) {
       sh.getRange(i + 1, 1, 1, HEADERS.length).setValues([row]);
@@ -96,7 +99,7 @@ function doGet(e) {
     if (action === 'list') return out_({ ok: true, records: readAll_() }, cb);
     if (action === 'upsert') {
       upsert_({ id: p.id, customer: p.customer, agentCode: p.agentCode, agentName: p.agentName,
-                date: p.date, phone: p.phone, note: p.note, updatedAt: p.updatedAt });
+                date: p.date, phone: p.phone, note: p.note, signed: p.signed, signedAt: p.signedAt, updatedAt: p.updatedAt });
       return out_({ ok: true }, cb);
     }
     if (action === 'delete') { del_(p.id); return out_({ ok: true }, cb); }

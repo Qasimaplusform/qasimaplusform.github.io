@@ -42,7 +42,7 @@
   .card .lbl { font-size:13px; color:var(--muted); margin-top:8px; font-weight:600; }
   .card.c-total .num{color:var(--brand)} .card.c-wait .num{color:var(--ok)}
   .card.c-risk .num{color:var(--err)} .card.c-lost .num{color:#6b6b8a}
-  .card.c-nodate .num{color:#c2410c}
+  .card.c-nodate .num{color:#c2410c} .card.c-signed .num{color:#0f766e}
 
   /* Toolbar */
   .toolbar { display:flex; gap:10px; flex-wrap:wrap; align-items:center; background:var(--white); border:1px solid var(--border); border-radius:14px; padding:14px; margin-bottom:16px; }
@@ -69,6 +69,7 @@
   .pill.risk { background:var(--err-bg); color:var(--err); border:1px solid var(--err-border); }
   .pill.lost { background:#f1f1f6; color:#6b6b8a; border:1px solid #d8d8e6; }
   .pill.nodate { background:#fff7ed; color:#c2410c; border:1px solid #fed7aa; }
+  .pill.signed { background:#ccfbf1; color:#0f766e; border:1px solid #99f6e4; }
   .note-cell { max-width:240px; }
   .note-input { width:100%; border:1px solid transparent; border-radius:8px; padding:7px 9px; font-family:inherit; font-size:13px; background:transparent; resize:vertical; min-height:36px; color:var(--text); transition:background .15s,border-color .15s; }
   .note-cell:hover .note-input, .note-input:focus { background:var(--bg); border-color:var(--border); }
@@ -78,6 +79,9 @@
   .icon-btn { background:none; border:1px solid var(--border); border-radius:8px; width:32px; height:32px; cursor:pointer; font-size:14px; display:inline-flex; align-items:center; justify-content:center; color:var(--muted); transition:all .15s; }
   .icon-btn:hover { border-color:var(--err); color:var(--err); background:var(--err-bg); }
   .icon-btn.resend:hover { border-color:var(--brand); color:var(--brand); background:var(--brand-light); }
+  .icon-btn.sign { filter:grayscale(1); opacity:.55; }
+  .icon-btn.sign:hover { filter:none; opacity:1; border-color:#0f766e; background:#ccfbf1; }
+  .icon-btn.sign.on { filter:none; opacity:1; border-color:#0f766e; background:#ccfbf1; }
   .empty { text-align:center; padding:50px 20px; color:var(--muted); }
   .empty .big { font-size:40px; margin-bottom:12px; }
 
@@ -91,7 +95,7 @@
   .agent-card .an .total { font-size:12px; color:var(--muted); font-weight:600; }
   .agent-stats { display:flex; gap:6px; flex-wrap:wrap; }
   .chip { font-size:11px; font-weight:700; padding:4px 8px; border-radius:8px; }
-  .chip.v{ background:var(--ok-bg); color:var(--ok);} .chip.r{ background:var(--err-bg); color:var(--err);} .chip.l{ background:#f1f1f6; color:#6b6b8a;}
+  .chip.v{ background:var(--ok-bg); color:var(--ok);} .chip.r{ background:var(--err-bg); color:var(--err);} .chip.l{ background:#f1f1f6; color:#6b6b8a;} .chip.s{ background:#ccfbf1; color:#0f766e;}
 
   /* Modal */
   .modal-bg { display:none; position:fixed; inset:0; background:rgba(26,26,46,0.45); z-index:100; align-items:flex-start; justify-content:center; padding:30px 16px; overflow-y:auto; }
@@ -123,6 +127,7 @@
     <h1>📋 متابعة الاتفاقيات <span class="badge">قسيمة بلس</span></h1>
     <div class="header-actions">
       <button class="hbtn" onclick="refreshCloud()"><span class="sync-dot" id="sync-dot"></span> <span id="sync-label">مزامنة</span></button>
+      <button class="hbtn" onclick="openSignReport()">📈 تقرير التوقيعات</button>
       <button class="hbtn" onclick="openImport()">⬆️ استيراد</button>
       <button class="hbtn" onclick="exportCSV()">⬇️ تصدير</button>
       <button class="hbtn" onclick="openSettings()">⚙️ الإعدادات</button>
@@ -139,6 +144,7 @@
   <!-- بطاقات الإحصائيات -->
   <div class="cards" id="cards">
     <div class="card c-total" data-filter="all"  onclick="setFilter('all')"><div class="num" id="n-total">0</div><div class="lbl">إجمالي الاتفاقيات</div></div>
+    <div class="card c-signed" data-filter="signed" onclick="setFilter('signed')"><div class="num" id="n-signed">0</div><div class="lbl">✅ تم التوقيع</div></div>
     <div class="card c-wait"  data-filter="wait" onclick="setFilter('wait')"><div class="num" id="n-wait">0</div><div class="lbl">قيد الانتظار للتوقيع</div></div>
     <div class="card c-risk"  data-filter="risk" onclick="setFilter('risk')"><div class="num" id="n-risk">0</div><div class="lbl">🔴 مهددة (٥ أيام أو أقل)</div></div>
     <div class="card c-lost"  data-filter="lost" onclick="setFilter('lost')"><div class="num" id="n-lost">0</div><div class="lbl">منتهية / لوست</div></div>
@@ -158,6 +164,7 @@
     <select id="filter-agent" onchange="render()"><option value="">كل المناديب</option></select>
     <select id="filter-status" onchange="syncStatusSelect()">
       <option value="all">كل الحالات</option>
+      <option value="signed">✅ تم التوقيع</option>
       <option value="wait">قيد الانتظار للتوقيع</option>
       <option value="risk">🔴 مهددة (٥ أيام أو أقل)</option>
       <option value="lost">منتهية / لوست</option>
@@ -207,8 +214,11 @@
         <input type="text" id="e-phone" placeholder="05XXXXXXXX" inputmode="numeric">
       </div>
     </div>
-    <label>تاريخ الاتفاقية <span style="font-weight:400">(اتركه فارغاً = منتهية وتحتاج إعادة إرسال)</span></label>
+    <label>تاريخ إنشاء/إرسال الاتفاقية <span style="font-weight:400">(صالحة ٣٠ يوم ثم تنتهي)</span></label>
     <input type="date" id="e-date">
+    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-top:14px">
+      <input type="checkbox" id="e-signed" style="width:auto"> <span>✅ تم التوقيع (اقفل الاتفاقية كموقّعة)</span>
+    </label>
     <label>ملاحظة / حالة العميل / المشكلة</label>
     <textarea id="e-note" rows="3" placeholder="مثال: ينتظر موافقة المالك / رقم خاطئ / تم الإرسال بانتظار التوقيع..."></textarea>
     <div class="modal-actions">
@@ -258,6 +268,19 @@
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="closeModal('modal-settings')">إلغاء</button>
       <button class="btn btn-primary" onclick="saveSettings()">حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: تقرير التوقيعات -->
+<div class="modal-bg" id="modal-report">
+  <div class="modal">
+    <h2><span>📈 تقرير التوقيعات</span><span class="x" onclick="closeModal('modal-report')">×</span></h2>
+    <div id="report-body" style="font-size:14px; line-height:1.9"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('modal-report')">إغلاق</button>
+      <button class="btn btn-soft" onclick="copyReport()">📋 نسخ التقرير</button>
+      <button class="btn btn-primary" onclick="shareReport()">🟢 إرسال واتساب</button>
     </div>
   </div>
 </div>
@@ -325,8 +348,9 @@ function parseDate(raw){
   return '';
 }
 
-/* حساب حالة الاتفاقية — ٣ حالات حسب (تاريخ الإنشاء + مدة الصلاحية) */
+/* حساب حالة الاتفاقية — موقّع (نهائي) ثم ٣ حالات حسب (تاريخ الإنشاء + مدة الصلاحية) */
 function statusOf(rec){
+  if(rec.signed) return { key:'signed', label:'✅ تم التوقيع', cls:'signed', days:null };
   if(!rec.date) return { key:'nodate', label:'بدون تاريخ ⚠️', cls:'nodate', days:null };
   const start=new Date(rec.date+'T00:00:00');
   if(isNaN(start.getTime())) return { key:'nodate', label:'بدون تاريخ ⚠️', cls:'nodate', days:null };
@@ -393,7 +417,7 @@ async function refreshCloud(){
     const res=await jsonp({ action:'list' });
     if(res && res.ok && Array.isArray(res.records)){
       records=res.records.map(r=>({ id:r.id, customer:r.customer||'', agentCode:r.agentCode||'', agentName:r.agentName||'',
-        date:r.date||'', phone:r.phone||'', note:r.note||'', updatedAt:r.updatedAt||'' }));
+        date:r.date||'', phone:r.phone||'', note:r.note||'', signed:r.signed===true||r.signed==='true'||r.signed==='نعم', signedAt:r.signedAt||'', updatedAt:r.updatedAt||'' }));
       saveLocal(); render(); setSync('on'); toast('تمت المزامنة ('+records.length+' عميل)','ok');
     } else { setSync('off'); toast('تعذّرت المزامنة','err'); }
   }catch(e){ setSync('off'); toast(e.message==='timeout'?'انتهت مهلة الاتصال':'تعذّر الاتصال بالمزامنة','err'); }
@@ -402,7 +426,8 @@ async function refreshCloud(){
 async function cloudUpsert(rec){
   if(!cfg.endpoint) return;
   try{ await jsonp({ action:'upsert', id:rec.id, customer:rec.customer, agentCode:rec.agentCode,
-        agentName:rec.agentName, date:rec.date, phone:rec.phone, note:rec.note, updatedAt:rec.updatedAt }); setSync('on'); }
+        agentName:rec.agentName, date:rec.date, phone:rec.phone, note:rec.note,
+        signed:rec.signed?'نعم':'', signedAt:rec.signedAt||'', updatedAt:rec.updatedAt }); setSync('on'); }
   catch(e){ setSync('off'); }
 }
 async function cloudDelete(id){
@@ -439,11 +464,12 @@ function render(){
   const fAgent=$('filter-agent').value;
 
   // إحصائيات
-  let nWait=0,nRisk=0,nLost=0,nNo=0;
+  let nSigned=0,nWait=0,nRisk=0,nLost=0,nNo=0;
   records.forEach(r=>{ const st=statusOf(r);
-    if(st.key==='wait')nWait++; else if(st.key==='risk')nRisk++;
+    if(st.key==='signed')nSigned++; else if(st.key==='wait')nWait++; else if(st.key==='risk')nRisk++;
     else if(st.key==='lost')nLost++; else nNo++; });
   $('n-total').textContent=records.length;
+  $('n-signed').textContent=nSigned;
   $('n-wait').textContent=nWait; $('n-risk').textContent=nRisk;
   $('n-lost').textContent=nLost; $('n-nodate').textContent=nNo;
   $('card-nodate').style.display = nNo? 'block':'none';
@@ -452,16 +478,17 @@ function render(){
   $('report-date').textContent='تاريخ اليوم: '+todayStr();
   const byAgent={};
   records.forEach(r=>{ const key=r.agentName||agentName(r.agentCode)||'غير محدد';
-    if(!byAgent[key]) byAgent[key]={ name:key, wait:0, risk:0, lost:0, no:0, total:0 };
+    if(!byAgent[key]) byAgent[key]={ name:key, signed:0, wait:0, risk:0, lost:0, no:0, total:0 };
     const st=statusOf(r); byAgent[key].total++;
-    if(st.key==='wait')byAgent[key].wait++; else if(st.key==='risk')byAgent[key].risk++;
+    if(st.key==='signed')byAgent[key].signed++; else if(st.key==='wait')byAgent[key].wait++; else if(st.key==='risk')byAgent[key].risk++;
     else if(st.key==='lost')byAgent[key].lost++; else byAgent[key].no++; });
   const grid=$('agent-grid');
-  // الأكثر إلحاحاً أولاً: عدد المهددة ثم المنتهية
+  // الأكثر إلحاحاً أولاً: المهددة ثم المنتهية
   const keys=Object.keys(byAgent).sort((a,b)=> (byAgent[b].risk*100+byAgent[b].lost)-(byAgent[a].risk*100+byAgent[a].lost));
   grid.innerHTML = keys.length? keys.map(k=>{ const g=byAgent[k];
     return '<div class="agent-card"><div class="an"><span>'+esc(g.name)+'</span><span class="total">'+g.total+' اتفاقية</span></div>'+
       '<div class="agent-stats">'+
+      (g.signed?'<span class="chip s">✅ وقّع '+g.signed+'</span>':'')+
       (g.wait?'<span class="chip v">انتظار '+g.wait+'</span>':'')+
       (g.risk?'<span class="chip r">🔴 مهددة '+g.risk+'</span>':'')+
       (g.lost?'<span class="chip l">لوست '+g.lost+'</span>':'')+
@@ -475,8 +502,8 @@ function render(){
     if(q && !(normAr(r.customer).includes(q) || String(r.phone||'').includes(q))) return false;
     if(activeFilter!=='all'){ const st=statusOf(r); if(st.key!==activeFilter) return false; }
     return true;
-  }).sort((a,b)=>{ // الأهم أولاً: مهددة ثم لوست ثم بدون تاريخ ثم قيد الانتظار
-    const order={risk:0,lost:1,nodate:2,wait:3};
+  }).sort((a,b)=>{ // الأهم أولاً: مهددة ثم لوست ثم بدون تاريخ ثم قيد الانتظار ثم الموقّعة
+    const order={risk:0,lost:1,nodate:2,wait:3,signed:4};
     return order[statusOf(a).key]-order[statusOf(b).key];
   });
 
@@ -489,6 +516,7 @@ function render(){
       '<td><span class="pill '+st.cls+'">'+st.label+'</span></td>'+
       '<td class="note-cell"><textarea class="note-input" rows="1" placeholder="اكتب ملاحظة..." onblur="changeNote(\''+jsEsc(r.id)+'\',this.value)">'+esc(r.note)+'</textarea></td>'+
       '<td><div class="row-actions">'+
+        '<button class="icon-btn sign'+(r.signed?' on':'')+'" title="'+(r.signed?'إلغاء التوقيع':'تحديد كموقّع')+'" onclick="toggleSigned(\''+jsEsc(r.id)+'\')">✅</button>'+
         '<button class="icon-btn resend" title="تعديل" onclick="openEdit(\''+jsEsc(r.id)+'\')">✏️</button>'+
         '<button class="icon-btn" title="حذف" onclick="delRecord(\''+jsEsc(r.id)+'\')">🗑️</button>'+
       '</div></td>'+
@@ -505,16 +533,55 @@ function jsEsc(s){ return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
 function setFilter(f){ activeFilter=f; $('filter-status').value=f; render(); }
 function syncStatusSelect(){ activeFilter=$('filter-status').value; render(); }
 
+/* ====== تقرير التوقيعات ====== */
+let lastReportText='';
+function buildSignReport(){
+  const total=records.length;
+  const signedRecs=records.filter(r=>r.signed);
+  const signed=signedRecs.length;
+  const today=todayStr();
+  const todayCount=signedRecs.filter(r=>r.signedAt===today).length;
+  const rate= total? Math.round(signed/total*100):0;
+  // ترتيب المناديب حسب عدد التوقيعات
+  const byRep={};
+  records.forEach(r=>{ const nm=r.agentName||agentName(r.agentCode)||'غير محدد'; if(!byRep[nm])byRep[nm]={signed:0,total:0}; byRep[nm].total++; if(r.signed)byRep[nm].signed++; });
+  const ranking=Object.entries(byRep).filter(e=>e[1].signed>0).sort((a,b)=>b[1].signed-a[1].signed);
+  // نص قابل للإرسال
+  let txt='📈 تقرير التوقيعات — '+today+'\n';
+  txt+='—————————————\n';
+  txt+='✅ إجمالي الموقّعين: '+signed+' من '+total+' ('+rate+'%)\n';
+  txt+='🗓️ وقّعوا اليوم: '+todayCount+'\n\n';
+  txt+='🏆 ترتيب المناديب حسب التوقيعات:\n';
+  txt+= ranking.length? ranking.map((e,i)=>(i+1)+'. '+e[0]+' — '+e[1].signed+' توقيع (من '+e[1].total+')').join('\n') : 'لا توجد توقيعات بعد.';
+  lastReportText=txt;
+  // HTML للعرض
+  let html='<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px">'+
+    '<div style="flex:1;min-width:120px;background:#ccfbf1;border-radius:12px;padding:14px;text-align:center"><div style="font-size:28px;font-weight:800;color:#0f766e">'+signed+'</div><div style="font-size:12px;color:#0f766e">موقّع من '+total+' ('+rate+'%)</div></div>'+
+    '<div style="flex:1;min-width:120px;background:var(--brand-light);border-radius:12px;padding:14px;text-align:center"><div style="font-size:28px;font-weight:800;color:var(--brand)">'+todayCount+'</div><div style="font-size:12px;color:var(--brand-dark)">وقّعوا اليوم</div></div>'+
+    '</div>';
+  html+='<div style="font-weight:700;color:var(--brand-dark);margin-bottom:8px">🏆 ترتيب المناديب</div>';
+  html+= ranking.length? '<div style="display:flex;flex-direction:column;gap:6px">'+ranking.map((e,i)=>
+    '<div style="display:flex;justify-content:space-between;align-items:center;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:9px 12px">'+
+    '<span><b>'+(i+1)+'.</b> '+esc(e[0])+'</span>'+
+    '<span style="font-weight:700;color:#0f766e">'+e[1].signed+' / '+e[1].total+'</span></div>').join('')+'</div>'
+    : '<div style="color:var(--muted)">لا توجد توقيعات بعد — حدّد العملاء الموقّعين بزر ✅ في الجدول.</div>';
+  return html;
+}
+function openSignReport(){ $('report-body').innerHTML=buildSignReport(); openModal('modal-report'); }
+function copyReport(){ navigator.clipboard.writeText(lastReportText).then(()=>toast('تم نسخ التقرير','ok'), ()=>toast('تعذّر النسخ','err')); }
+function shareReport(){ window.open('https://wa.me/?text='+encodeURIComponent(lastReportText), '_blank'); }
+
 /* ====== تعديل سريع ====== */
 function changeDate(id,val){ const r=records.find(x=>x.id===id); if(!r)return; r.date=parseDate(val); r.updatedAt=todayStr(); saveLocal(); render(); cloudUpsert(r); }
 function changeNote(id,val){ const r=records.find(x=>x.id===id); if(!r)return; if(r.note===val)return; r.note=val; r.updatedAt=todayStr(); saveLocal(); cloudUpsert(r); toast('تم حفظ الملاحظة','ok'); }
 function delRecord(id){ const r=records.find(x=>x.id===id); if(!r)return; if(!confirm('حذف "'+r.customer+'"؟'))return; records=records.filter(x=>x.id!==id); saveLocal(); render(); cloudDelete(id); }
+function toggleSigned(id){ const r=records.find(x=>x.id===id); if(!r)return; r.signed=!r.signed; r.signedAt=r.signed?todayStr():''; r.updatedAt=todayStr(); saveLocal(); render(); cloudUpsert(r); toast(r.signed?'✅ تم تحديد العميل كموقّع':'أُلغي التوقيع','ok'); }
 
 /* ====== المودالات ====== */
 function openModal(id){ $(id).classList.add('show'); }
 function closeModal(id){ $(id).classList.remove('show'); }
-function openAdd(){ $('edit-title').textContent='إضافة عميل'; $('e-id').value=''; $('e-customer').value=''; $('e-phone').value=''; $('e-date').value=''; $('e-note').value=''; if($('e-agent').options.length===0) render(); $('e-agent').value=AGENTS[0].code; openModal('modal-edit'); }
-function openEdit(id){ const r=records.find(x=>x.id===id); if(!r)return; $('edit-title').textContent='تعديل عميل'; $('e-id').value=r.id; $('e-customer').value=r.customer; $('e-phone').value=r.phone||''; $('e-date').value=r.date||''; $('e-note').value=r.note||''; $('e-agent').value=r.agentCode||AGENTS[0].code; openModal('modal-edit'); }
+function openAdd(){ $('edit-title').textContent='إضافة عميل'; $('e-id').value=''; $('e-customer').value=''; $('e-phone').value=''; $('e-date').value=''; $('e-note').value=''; $('e-signed').checked=false; if($('e-agent').options.length===0) render(); $('e-agent').value=AGENTS[0].code; openModal('modal-edit'); }
+function openEdit(id){ const r=records.find(x=>x.id===id); if(!r)return; $('edit-title').textContent='تعديل عميل'; $('e-id').value=r.id; $('e-customer').value=r.customer; $('e-phone').value=r.phone||''; $('e-date').value=r.date||''; $('e-note').value=r.note||''; $('e-signed').checked=!!r.signed; $('e-agent').value=r.agentCode||AGENTS[0].code; openModal('modal-edit'); }
 function saveEdit(){
   const customer=$('e-customer').value.trim();
   if(!customer){ toast('اكتب اسم العميل','err'); return; }
@@ -525,7 +592,10 @@ function saveEdit(){
   let rec;
   if(oldId){ rec=records.find(x=>x.id===oldId); }
   if(!rec){ const id=makeId(customer,phone); if(records.some(x=>x.id===id)){ toast('هذا العميل مضاف مسبقاً','err'); return; } rec={ id }; records.push(rec); }
-  rec.customer=customer; rec.agentCode=agentCode; rec.agentName=ag?ag.name:''; rec.phone=phone; rec.date=date; rec.note=$('e-note').value.trim(); rec.updatedAt=todayStr();
+  const wasSigned=!!rec.signed; const nowSigned=$('e-signed').checked;
+  rec.customer=customer; rec.agentCode=agentCode; rec.agentName=ag?ag.name:''; rec.phone=phone; rec.date=date; rec.note=$('e-note').value.trim();
+  rec.signed=nowSigned; if(nowSigned && !wasSigned) rec.signedAt=todayStr(); if(!nowSigned) rec.signedAt='';
+  rec.updatedAt=todayStr();
   saveLocal(); render(); cloudUpsert(rec); closeModal('modal-edit'); toast('تم الحفظ','ok');
 }
 
@@ -557,7 +627,7 @@ function doImport(){
     const id=makeId(customer,phone);
     let rec=records.find(x=>x.id===id);
     if(rec){ rec.agentCode=ag?ag.code:rec.agentCode; rec.agentName=ag?ag.name:(agentRaw||rec.agentName); if(date)rec.date=date; if(phone)rec.phone=phone; if(note)rec.note=note; rec.updatedAt=todayStr(); updated++; }
-    else { rec={ id, customer, agentCode:ag?ag.code:'', agentName:ag?ag.name:agentRaw, date, phone, note, updatedAt:todayStr() }; records.push(rec); added++; }
+    else { rec={ id, customer, agentCode:ag?ag.code:'', agentName:ag?ag.name:agentRaw, date, phone, note, signed:false, signedAt:'', updatedAt:todayStr() }; records.push(rec); added++; }
     touched.push(rec);
   }
   saveLocal(); render(); closeModal('modal-import');
@@ -567,9 +637,9 @@ function doImport(){
 
 /* ====== التصدير ====== */
 function exportCSV(){
-  const head=['اسم العميل','المندوب','التاريخ','الجوال','الحالة','ملاحظة'];
+  const head=['اسم العميل','المندوب','التاريخ','الجوال','الحالة','تم التوقيع','تاريخ التوقيع','ملاحظة'];
   const rows=records.map(r=>{ const st=statusOf(r);
-    return [r.customer, r.agentName||agentName(r.agentCode), r.date, r.phone, st.label, (r.note||'').replace(/\n/g,' ')]; });
+    return [r.customer, r.agentName||agentName(r.agentCode), r.date, r.phone, st.label, r.signed?'نعم':'لا', r.signedAt||'', (r.note||'').replace(/\n/g,' ')]; });
   const csv='﻿'+[head].concat(rows).map(row=> row.map(v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"').join(',')).join('\r\n');
   const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='agreements_'+todayStr()+'.csv'; a.click();
