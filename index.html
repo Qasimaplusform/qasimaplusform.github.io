@@ -97,6 +97,11 @@
   .success .success-msg { font-size:14px; color:var(--muted); line-height:1.7; margin-bottom:20px; }
   .success-badge { display:inline-flex; align-items:center; gap:6px; background:var(--brand-light); color:var(--brand-dark); border-radius:20px; padding:8px 18px; font-size:13px; font-weight:600; }
 
+  .sel { width:100%; padding:13px; border:1.5px solid var(--border); border-radius:10px; font-family:inherit; font-size:15px; background:#fff; color:var(--text); }
+  .sel.valid { border-color:var(--ok); background:var(--ok-bg); }
+  .branch-card { border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:14px; background:#fcfcff; }
+  .branch-card:last-child { margin-bottom:0; }
+  .branch-title { font-size:14px; font-weight:700; color:var(--brand-dark); margin-bottom:14px; }
   .req-note { font-size:12px; color:#a0a0b8; margin-bottom:18px; text-align:right; }
 
 
@@ -132,108 +137,52 @@
     <input type="hidden" name="_subject" id="f-subject">
     
 
-    <!-- بيانات المحل -->
     <div class="section">
       <div class="section-head">
-        <div class="section-icon">🏪</div>
-        <h2>بيانات المحل</h2>
+        <div class="section-icon">🏢</div>
+        <h2>بيانات الشركة</h2>
       </div>
-      <div class="field">
-        <label><span class="req">*</span> الحالة الضريبية</label>
+      <div class="field" id="cr-field">
+        <label><span class="req">*</span> رقم السجل التجاري</label>
         <div class="input-wrap">
-          <select id="f-vat-status" onchange="onVatStatusChange()" style="width:100%;padding:13px;border:1px solid #d7dcec;border-radius:12px;font-family:inherit;font-size:15px;background:#fff;color:#1a1a2e">
-            <option value="">— اختر —</option>
-            <option value="معفي">معفي من الضريبة</option>
-            <option value="يوجد ضريبة">يوجد ضريبة</option>
-          </select>
+          <input type="tel" id="f-cr" placeholder="7XXXXXXXXX" maxlength="10" inputmode="numeric" oninput="validateDigits(this,'cr',10)">
+          <span class="status-icon" id="ic-cr"></span>
         </div>
-        <div class="hint">إذا كان لديك ضريبة، سنطلب صورة الشهادة الضريبية</div>
+        <div class="hint">10 أرقام كما في السجل التجاري</div>
+        <div class="err-msg" id="err-cr">يجب أن يكون 10 أرقام</div>
       </div>
-      <div class="field">
-        <label><span class="req">*</span> رابط موقع المحل على الخريطة</label>
-        <div class="input-wrap">
-          <input type="url" name="موقع المحل" id="f-loc" placeholder="https://maps.app.goo.gl/..." oninput="validateURL(this)">
-          <span class="status-icon" id="ic-loc"></span>
-        </div>
-        <div class="err-msg" id="err-loc">يرجى إدخال رابط صحيح يبدأ بـ https://</div>
-      </div>
-      <div class="field">
-        <label><span class="req">*</span> هل لديك فروع أخرى؟</label>
-        <div class="input-wrap">
-          <select id="f-branches" onchange="onBranchesChange()" style="width:100%;padding:13px;border:1px solid #d7dcec;border-radius:12px;font-family:inherit;font-size:15px;background:#fff;color:#1a1a2e">
-            <option value="">— اختر —</option>
-            <option value="لا">لا يوجد فروع أخرى</option>
-            <option value="نعم">نعم، لدي فروع أخرى</option>
-          </select>
-        </div>
-      </div>
-      <div class="field" id="branch-count-field" style="display:none">
-        <label><span class="req">*</span> كم عدد الفروع الأخرى؟</label>
-        <div class="input-wrap">
-          <input type="number" id="f-branch-count" min="1" max="999" placeholder="مثال: 3" inputmode="numeric" oninput="onBranchCount(this)">
-          <span class="status-icon" id="ic-branches"></span>
-        </div>
-        <div class="hint">اكتب عدد فروعك الإضافية</div>
-      </div>
-    </div>
-
-    <!-- بيانات التواصل -->
-    <div class="section">
-      <div class="section-head">
-        <div class="section-icon">📞</div>
-        <h2>بيانات التواصل</h2>
-      </div>
-      <div class="field">
-        <label><span class="req">*</span> رقم المالك (للتوقيع على الاتفاقية)</label>
-        <div class="input-wrap">
-          <input type="tel" name="رقم المالك" id="f-owner" placeholder="05XXXXXXXX" maxlength="10" inputmode="numeric" oninput="validatePhone(this,'ic-owner','err-owner','owner')">
-          <span class="status-icon" id="ic-owner"></span>
-        </div>
-        <div class="hint">10 أرقام تبدأ بـ 05</div>
-        <div class="err-msg" id="err-owner">يجب أن يكون 10 أرقام ويبدأ بـ 05</div>
-      </div>
-      <div class="field">
-        <label><span class="req">*</span> رقم الممثل</label>
-        <div class="input-wrap">
-          <input type="tel" name="رقم الممثل" id="f-rep" placeholder="05XXXXXXXX" maxlength="10" inputmode="numeric" oninput="validatePhone(this,'ic-rep','err-rep','rep')">
-          <span class="status-icon" id="ic-rep"></span>
-        </div>
-        <div class="hint">10 أرقام تبدأ بـ 05</div>
-        <div class="err-msg" id="err-rep">يجب أن يكون 10 أرقام ويبدأ بـ 05</div>
-      </div>
-    </div>
-
-    <!-- المستندات -->
-    <div class="section">
-      <div class="section-head">
-        <div class="section-icon">📎</div>
-        <h2>المستندات المطلوبة</h2>
-      </div>
-      <div class="field">
+      <div class="field" id="crimg-field">
         <label><span class="req">*</span> صورة السجل التجاري</label>
-        <div class="upload-wrap" id="uw-cr" onclick="document.getElementById('up-cr').click()">
+        <div class="upload-wrap" id="uw-crimg" onclick="document.getElementById('up-crimg').click()">
           <div class="upload-hint">
             <span class="up-icon">📄</span>
             <span class="up-text">اضغط لرفع الملف</span>
             <div class="up-sub">صورة أو PDF • الحد الأقصى 10MB</div>
           </div>
-          <input type="file" id="up-cr" name="صورة السجل التجاري" accept="image/*,.pdf" style="display:none" onchange="markFile('cr',this)">
-          <div id="ft-cr"></div>
+          <input type="file" id="up-crimg" accept="image/*,.pdf" style="display:none" onchange="markFile('crimg',this)">
+          <div id="ft-crimg"></div>
         </div>
       </div>
       <div class="field">
-        <label><span class="req">*</span> صورة العنوان الوطني</label>
-        <div class="upload-wrap" id="uw-addr" onclick="document.getElementById('up-addr').click()">
-          <div class="upload-hint">
-            <span class="up-icon">🏠</span>
-            <span class="up-text">اضغط لرفع الملف</span>
-            <div class="up-sub">صورة أو PDF • الحد الأقصى 10MB</div>
-          </div>
-          <input type="file" id="up-addr" name="صورة العنوان الوطني" accept="image/*,.pdf" style="display:none" onchange="markFile('addr',this)">
-          <div id="ft-addr"></div>
+        <label><span class="req">*</span> الحالة الضريبية</label>
+        <div class="input-wrap">
+          <select id="f-vat-status" class="sel" onchange="onVatStatusChange()">
+            <option value="">— اختر —</option>
+            <option value="معفي">غير مسجل في الضريبة</option>
+            <option value="يوجد ضريبة">مسجل في الضريبة</option>
+          </select>
         </div>
       </div>
-      <div class="field">
+      <div class="field" id="vat-field" style="display:none">
+        <label><span class="req">*</span> الرقم الضريبي</label>
+        <div class="input-wrap">
+          <input type="tel" id="f-vat" placeholder="3XXXXXXXXXXXXX3" maxlength="15" inputmode="numeric" oninput="validateVat(this)">
+          <span class="status-icon" id="ic-vat"></span>
+        </div>
+        <div class="hint">15 رقماً يبدأ وينتهي بـ 3</div>
+        <div class="err-msg" id="err-vat">الرقم الضريبي 15 رقماً يبدأ وينتهي بـ 3</div>
+      </div>
+      <div class="field" id="iban-field">
         <label><span class="req">*</span> صورة شهادة الآيبان (IBAN)</label>
         <div class="upload-wrap" id="uw-iban" onclick="document.getElementById('up-iban').click()">
           <div class="upload-hint">
@@ -241,34 +190,43 @@
             <span class="up-text">اضغط لرفع الملف</span>
             <div class="up-sub">صورة أو PDF • الحد الأقصى 10MB</div>
           </div>
-          <input type="file" id="up-iban" name="صورة الآيبان" accept="image/*,.pdf" style="display:none" onchange="markFile('iban',this)">
+          <input type="file" id="up-iban" accept="image/*,.pdf" style="display:none" onchange="markFile('iban',this)">
           <div id="ft-iban"></div>
         </div>
       </div>
-      <div class="field">
-        <label><span class="req">*</span> صورة واجهة المحل</label>
-        <div class="upload-wrap" id="uw-shop" onclick="document.getElementById('up-shop').click()">
-          <div class="upload-hint">
-            <span class="up-icon">🏪</span>
-            <span class="up-text">اضغط لرفع الصورة</span>
-            <div class="up-sub">صورة • الحد الأقصى 10MB</div>
-          </div>
-          <input type="file" id="up-shop" name="صورة المحل" accept="image/*" style="display:none" onchange="markFile('shop',this)">
-          <div id="ft-shop"></div>
-        </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head">
+        <div class="section-icon">✍️</div>
+        <h2>توقيع الاتفاقية</h2>
       </div>
-      <div class="field" id="vatcert-field" style="display:none">
-        <label><span class="req">*</span> صورة الشهادة الضريبية</label>
-        <div class="upload-wrap" id="uw-vatcert" onclick="document.getElementById('up-vatcert').click()">
-          <div class="upload-hint">
-            <span class="up-icon">🧾</span>
-            <span class="up-text">اضغط لرفع الملف</span>
-            <div class="up-sub">صورة أو PDF • الحد الأقصى 10MB</div>
-          </div>
-          <input type="file" id="up-vatcert" name="صورة الشهادة الضريبية" accept="image/*,.pdf" style="display:none" onchange="markFile('vatcert',this)">
-          <div id="ft-vatcert"></div>
+      <div class="field" id="owner-field">
+        <label><span class="req">*</span> رقم جوال المالك</label>
+        <div class="input-wrap">
+          <input type="tel" id="f-owner" placeholder="05XXXXXXXX" maxlength="10" inputmode="numeric" oninput="validatePhone(this,'owner')">
+          <span class="status-icon" id="ic-owner"></span>
         </div>
+        <div class="hint">يُستخدم لتوقيع الاتفاقية • 10 أرقام تبدأ بـ 05</div>
+        <div class="err-msg" id="err-owner">يجب أن يكون 10 أرقام ويبدأ بـ 05</div>
       </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head">
+        <div class="section-icon">🏬</div>
+        <h2>الفروع</h2>
+      </div>
+      <div class="field" id="bcount-field">
+        <label><span class="req">*</span> كم عدد الفروع؟</label>
+        <div class="input-wrap">
+          <input type="number" min="1" max="20" id="f-bcount" placeholder="مثال: 3" inputmode="numeric" oninput="onBranchCount(this)">
+          <span class="status-icon" id="ic-bcount"></span>
+        </div>
+        <div class="hint">اكتب العدد الكلي بما فيه المحل الرئيسي (حتى 20)</div>
+        <div class="err-msg" id="err-bcount">العدد يجب أن يكون بين 1 و 20. لأكثر من 20 فرعاً تواصل مع المندوب.</div>
+      </div>
+      <div id="branches-list"></div>
     </div>
 
     <button type="button" class="send-btn" id="send-btn" onclick="submitForm()">
@@ -327,6 +285,12 @@ const AGENTS = [
   { code: "rakan",     name: "راكان الزهراني", email: "r.alzahrani@autobia.sa" },
   { code: "baessa",    name: "محمد باعيسى",    email: "m.baessa@autobia.sa" },
   { code: "baher",     name: "باهر",           email: "baher@autobia.sa" },
+  { code: "mokhaimer", name: "أحمد مخيمر",     email: "ah.ahmed@autobia.sa" },
+  { code: "romih",     name: "فيصل الرميح",    email: "f.alromih@autobia.sa" },
+  { code: "husseini",  name: "محمد الحسيني",   email: "m.elhusseini@autobia.sa" },
+  { code: "sameeai",   name: "جهاد السميعي",   email: "g.alsameeai@autobia.sa" },
+  { code: "ansie",     name: "محمد الانسي",    email: "m.alansie@autobia.sa" },
+  { code: "esayi",     name: "ابراهيم العيسائي", email: "i.alesayi@autobia.sa" },
 ];
 
 // Set agent from URL param (?a=01 short code, or ?agent=email — both supported)
@@ -357,95 +321,180 @@ if (!agent) agent = DEFAULT_AGENT; // الرابط الرئيسي يعمل تح�
 }
 
 
-const p = new URLSearchParams(location.search);
+const MAX_BRANCHES = 20;
+const fv = { cr:false, vat:false, vatStatus:false, owner:false, bcount:false };
+const filled = { crimg:false, iban:false };
+let branches = []; // [{loc, phone, img, sign:'', license}]
 
-// subject already set by agent block above
-
-const filled = { cr:false, addr:false, iban:false, shop:false, vatcert:false };
-const fv = { agent:false, loc:false, owner:false, rep:false, branches:false, vatStatus:false };
-
-function vatCertRequired() {
-  return document.getElementById('f-vat-status').value === 'يوجد ضريبة';
-}
+function vatRequired() { return document.getElementById('f-vat-status').value === 'يوجد ضريبة'; }
 
 function updateProgress() {
-  let done = 0, total = 8;
-  if(fv.loc) done++; if(fv.owner) done++; if(fv.rep) done++;
-  if(fv.vatStatus) done++; if(fv.branches) done++;
-  if(filled.cr) done++; if(filled.addr) done++; if(filled.iban) done++; if(filled.shop) done++;
-  total = 9;
-  if(vatCertRequired()) { total = 10; if(filled.vatcert) done++; }
-  document.getElementById('progress-bar').style.width = Math.round((done/total)*100) + '%';
+  const checks = [fv.cr, filled.crimg, fv.vatStatus, filled.iban, fv.owner, fv.bcount];
+  if (vatRequired()) checks.push(fv.vat);
+  branches.forEach(b => {
+    checks.push(b.loc, b.phone, b.img, b.sign !== '');
+    if (b.sign === 'لا') checks.push(b.license);
+  });
+  const done = checks.filter(Boolean).length;
+  document.getElementById('progress-bar').style.width = Math.round(done / checks.length * 100) + '%';
 }
-
 function setStatus(input, iconId, errId, isValid, isDirty) {
   const icon = document.getElementById(iconId);
   const err = document.getElementById(errId);
-  if (!isDirty) { input.className=''; icon.textContent=''; err.style.display='none'; return; }
-  if (isValid) { input.className='valid'; icon.textContent='✅'; err.style.display='none'; }
+  if (!isDirty) { input.className=''; icon.textContent=''; err.style.display='none'; }
+  else if (isValid) { input.className='valid'; icon.textContent='✅'; err.style.display='none'; }
   else { input.className='invalid'; icon.textContent='❌'; err.style.display='block'; }
   updateProgress();
 }
-function onVatStatusChange() {
-  const sel = document.getElementById('f-vat-status').value;
-  const wrap = document.getElementById('vatcert-field');
-  fv.vatStatus = (sel === 'معفي' || sel === 'يوجد ضريبة');
-  wrap.style.display = (sel === 'يوجد ضريبة') ? 'block' : 'none';
-  updateProgress();
+function digitsOnly(el) { const v = el.value.replace(/\D/g,''); el.value = v; return v; }
+function validateDigits(el, key, len) {
+  const v = digitsOnly(el);
+  fv[key] = v.length === len;
+  setStatus(el, 'ic-'+key, 'err-'+key, fv[key], v.length > 0);
 }
-function validateURL(el) {
-  const v = el.value.trim();
-  fv.loc = v.startsWith('http') && v.length>10;
-  setStatus(el,'ic-loc','err-loc',fv.loc,v.length>0);
+function validateVat(el) {
+  const v = digitsOnly(el);
+  fv.vat = v.length === 15 && v.startsWith('3') && v.endsWith('3');
+  setStatus(el, 'ic-vat', 'err-vat', fv.vat, v.length > 0);
 }
-function validatePhone(el, iconId, errId, key) {
-  const v = el.value.replace(/\D/g,''); el.value=v;
-  fv[key] = v.length===10 && v.startsWith('05');
-  setStatus(el,iconId,errId,fv[key],v.length>0);
+function isPhone(v) { return v.length === 10 && v.startsWith('05'); }
+function validatePhone(el, key) {
+  const v = digitsOnly(el);
+  fv[key] = isPhone(v);
+  setStatus(el, 'ic-'+key, 'err-'+key, fv[key], v.length > 0);
+}
+function isUrl(v) { return v.startsWith('http') && v.length > 10; }
+function showFile(key, input) {
+  const uw = document.getElementById('uw-'+key);
+  uw.classList.remove('upload-err'); uw.classList.add('has-file');
+  document.getElementById('ft-'+key).innerHTML = '<div class="file-tag">✅ ' + input.files[0].name + '</div>';
 }
 function markFile(key, input) {
   if (!input.files.length) return;
-  filled[key] = true;
-  document.getElementById('uw-'+key).classList.remove('upload-err');
-  document.getElementById('uw-'+key).classList.add('has-file');
-  document.getElementById('ft-'+key).innerHTML = '<div class="file-tag">✅ '+input.files[0].name+'</div>';
+  filled[key] = true; showFile(key, input); updateProgress();
+}
+function onVatStatusChange() {
+  const sel = document.getElementById('f-vat-status');
+  fv.vatStatus = sel.value !== '';
+  sel.classList.toggle('valid', fv.vatStatus);
+  const show = vatRequired() ? 'block' : 'none';
+  document.getElementById('vat-field').style.display = show;
   updateProgress();
 }
-function onBranchesChange() {
-  const sel = document.getElementById('f-branches').value;
-  const wrap = document.getElementById('branch-count-field');
-  if (sel === 'نعم') {
-    wrap.style.display = 'block';
-    const c = document.getElementById('f-branch-count').value;
-    fv.branches = (parseInt(c,10) >= 1);
-  } else if (sel === 'لا') {
-    wrap.style.display = 'none';
-    fv.branches = true;
-  } else {
-    wrap.style.display = 'none';
-    fv.branches = false;
+
+// ===== الفروع =====
+function onBranchCount(el) {
+  const n = parseInt(el.value, 10);
+  const ok = n >= 1 && n <= MAX_BRANCHES;
+  fv.bcount = ok;
+  setStatus(el, 'ic-bcount', 'err-bcount', ok, el.value.length > 0);
+  // عند عدد غير صالح نخفي البطاقات مؤقتاً بدون حذف ما عبّأه التاجر
+  if (ok) renderBranches(n);
+  document.getElementById('branches-list').style.display = ok ? 'block' : 'none';
+  updateProgress();
+}
+function uploadBox(id, icon, text, accept, onchange) {
+  return `<div class="upload-wrap" id="uw-${id}" onclick="document.getElementById('up-${id}').click()">
+      <div class="upload-hint"><span class="up-icon">${icon}</span><span class="up-text">${text}</span>
+      <div class="up-sub">${accept.includes('pdf') ? 'صورة أو PDF' : 'صورة'} • الحد الأقصى 10MB</div></div>
+      <input type="file" id="up-${id}" accept="${accept}" style="display:none" onchange="${onchange}">
+      <div id="ft-${id}"></div></div>`;
+}
+function renderBranches(n) {
+  const list = document.getElementById('branches-list');
+  while (branches.length > n) { branches.pop(); list.lastElementChild.remove(); }
+  while (branches.length < n) {
+    const i = branches.length + 1;
+    branches.push({ loc:false, phone:false, img:false, sign:'', license:false });
+    const card = document.createElement('div');
+    card.className = 'branch-card';
+    card.innerHTML = `
+      <div class="branch-title">${i === 1 ? 'الفرع 1 (الرئيسي)' : 'الفرع ' + i}</div>
+      <div class="field">
+        <label><span class="req">*</span> رابط موقع الفرع على الخريطة</label>
+        <div class="input-wrap">
+          <input type="url" id="f-br${i}-loc" placeholder="https://maps.app.goo.gl/..." oninput="validateBranchURL(${i},this)">
+          <span class="status-icon" id="ic-br${i}-loc"></span>
+        </div>
+        <div class="err-msg" id="err-br${i}-loc">يرجى إدخال رابط صحيح يبدأ بـ https://</div>
+      </div>
+      <div class="field">
+        <label><span class="req">*</span> صورة واجهة الفرع</label>
+        ${uploadBox('br'+i+'img', '🏪', 'اضغط لرفع الصورة', 'image/*', `markBranchFile(${i},'img',this)`)}
+      </div>
+      <div class="field">
+        <label><span class="req">*</span> رقم ممثل الفرع</label>
+        <div class="input-wrap">
+          <input type="tel" id="f-br${i}-phone" placeholder="05XXXXXXXX" maxlength="10" inputmode="numeric" oninput="validateBranchPhone(${i},this)">
+          <span class="status-icon" id="ic-br${i}-phone"></span>
+        </div>
+        <div class="hint">الشخص المسؤول عن إنشاء العمليات في هذا الفرع</div>
+        <div class="err-msg" id="err-br${i}-phone">يجب أن يكون 10 أرقام ويبدأ بـ 05</div>
+      </div>
+      <div class="field">
+        <label><span class="req">*</span> هل الاسم في لوحة الفرع مطابق للسجل التجاري؟</label>
+        <select class="sel" id="f-br${i}-sign" onchange="onBranchSign(${i},this)">
+          <option value="">— اختر —</option>
+          <option value="نعم">نعم، مطابق</option>
+          <option value="لا">لا، غير مطابق</option>
+        </select>
+      </div>
+      <div class="field" id="br${i}lic-field" style="display:none">
+        <label><span class="req">*</span> صورة رخصة المحل (البلدية)</label>
+        ${uploadBox('br'+i+'lic', '📜', 'اضغط لرفع الملف', 'image/*,.pdf', `markBranchFile(${i},'license',this)`)}
+      </div>`;
+    list.appendChild(card);
   }
 }
-function onBranchCount(el) {
-  const n = parseInt(el.value,10);
-  fv.branches = (n >= 1);
-  const icon = document.getElementById('ic-branches');
-  if (el.value.length === 0) { el.className=''; icon.textContent=''; }
-  else if (fv.branches) { el.className='valid'; icon.textContent='✅'; }
-  else { el.className='invalid'; icon.textContent='❌'; }
+function validateBranchURL(i, el) {
+  const v = el.value.trim();
+  branches[i-1].loc = isUrl(v);
+  setStatus(el, 'ic-br'+i+'-loc', 'err-br'+i+'-loc', branches[i-1].loc, v.length > 0);
+}
+function validateBranchPhone(i, el) {
+  const v = digitsOnly(el);
+  branches[i-1].phone = isPhone(v);
+  setStatus(el, 'ic-br'+i+'-phone', 'err-br'+i+'-phone', branches[i-1].phone, v.length > 0);
+}
+function markBranchFile(i, kind, input) {
+  if (!input.files.length) return;
+  branches[i-1][kind] = true;
+  showFile(kind === 'img' ? 'br'+i+'img' : 'br'+i+'lic', input);
   updateProgress();
 }
-function allValid() {
-  const base = fv.loc && fv.owner && fv.rep && fv.branches && fv.vatStatus &&
-         filled.cr && filled.addr && filled.iban && filled.shop;
-  return base && (!vatCertRequired() || filled.vatcert);
+function onBranchSign(i, sel) {
+  branches[i-1].sign = sel.value;
+  sel.classList.toggle('valid', sel.value !== '');
+  document.getElementById('br'+i+'lic-field').style.display = sel.value === 'لا' ? 'block' : 'none';
+  updateProgress();
 }
+
+function allValid() {
+  const company = fv.cr && filled.crimg && fv.vatStatus && filled.iban &&
+                  (!vatRequired() || fv.vat);
+  const brs = fv.bcount && branches.every(b => b.loc && b.phone && b.img && b.sign !== '' && (b.sign !== 'لا' || b.license));
+  return company && fv.owner && brs;
+}
+function markErr(input, iconId, errId) { setStatus(input, iconId, errId, false, true); }
 function highlightErrors() {
-  const keys = ['cr','addr','iban','shop'];
-  if (vatCertRequired()) keys.push('vatcert');
-  keys.forEach(k => {
-    if (!filled[k]) document.getElementById('uw-'+k).classList.add('upload-err');
+  const upErr = id => document.getElementById('uw-'+id).classList.add('upload-err');
+  if (!fv.cr) markErr(document.getElementById('f-cr'), 'ic-cr', 'err-cr');
+  if (!filled.crimg) upErr('crimg');
+  if (!fv.vatStatus) document.getElementById('f-vat-status').classList.add('invalid');
+  if (vatRequired() && !fv.vat) markErr(document.getElementById('f-vat'), 'ic-vat', 'err-vat');
+  if (!filled.iban) upErr('iban');
+  if (!fv.owner) markErr(document.getElementById('f-owner'), 'ic-owner', 'err-owner');
+  if (!fv.bcount) markErr(document.getElementById('f-bcount'), 'ic-bcount', 'err-bcount');
+  else branches.forEach((b, idx) => {
+    const i = idx + 1;
+    if (!b.loc) markErr(document.getElementById('f-br'+i+'-loc'), 'ic-br'+i+'-loc', 'err-br'+i+'-loc');
+    if (!b.phone) markErr(document.getElementById('f-br'+i+'-phone'), 'ic-br'+i+'-phone', 'err-br'+i+'-phone');
+    if (!b.img) upErr('br'+i+'img');
+    if (b.sign === '') document.getElementById('f-br'+i+'-sign').classList.add('invalid');
+    if (b.sign === 'لا' && !b.license) upErr('br'+i+'lic');
   });
+  const first = document.querySelector('.invalid, .upload-err');
+  if (first) first.scrollIntoView({ behavior:'smooth', block:'center' });
 }
 
 async function compressImage(file) {
@@ -490,6 +539,9 @@ async function compressImage(file) {
 // ====== نظام قسيمة بلس (Google Apps Script) ======
 const ENDPOINT = 'https://script.google.com/macros/s/AKfycbyLL5m5fJGIxxNZlrvJepYfWdhL8iCX_b2N0pAhWzb_chPo5jwKINP0cLvLMDaUVba2/exec';
 const SECRET = 'qplus2026';
+// رقم فريد لهذا الطلب — يبقى نفسه عند إعادة المحاولة فلا يتكرر الطلب في النظام
+const REQUEST_ID = (window.crypto && crypto.randomUUID) ? crypto.randomUUID()
+  : 'r' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
 
 // تحويل ملف إلى base64 (بدون الترويسة)
 function fileToB64(file) {
@@ -519,14 +571,13 @@ async function submitForm() {
   loading.style.display = 'flex';
 
   try {
-    // ضغط + ترميز الصور الأربع
-    const fileMap = {
-      commercialRegisterFile: 'up-cr',
-      nationalAddressFile:    'up-addr',
-      ibanFile:               'up-iban',
-      shopImageFile:          'up-shop'
-    };
-    if (vatCertRequired()) fileMap.vatCertFile = 'up-vatcert';
+    // ضغط + ترميز الملفات
+    const fileMap = { commercialRegisterFile: 'up-crimg', ibanFile: 'up-iban' };
+    branches.forEach((b, idx) => {
+      const i = idx + 1;
+      fileMap['branchImageFile_' + i] = 'up-br' + i + 'img';
+      if (b.sign === 'لا') fileMap['branchLicenseFile_' + i] = 'up-br' + i + 'lic';
+    });
     const files = [];
     for (const field in fileMap) {
       const input = document.getElementById(fileMap[field]);
@@ -537,27 +588,48 @@ async function submitForm() {
       }
     }
 
+    const branchData = branches.map((b, idx) => ({
+      index: idx + 1,
+      mapUrl:   document.getElementById('f-br'+(idx+1)+'-loc').value.trim(),
+      repPhone: document.getElementById('f-br'+(idx+1)+'-phone').value,
+      signMatchesCR: b.sign
+    }));
+
     const payload = {
       key: SECRET,
+      requestId: REQUEST_ID,
       agentName:  document.getElementById('f-agent-name').value,
       agentEmail: agentEmail,
+      crNumber:   document.getElementById('f-cr').value,
       vatStatus:  document.getElementById('f-vat-status').value,
-      mapUrl:     document.getElementById('f-loc').value,
+      vatNumber:  vatRequired() ? document.getElementById('f-vat').value : '',
       ownerPhone: document.getElementById('f-owner').value,
-      repPhone:   document.getElementById('f-rep').value,
-      hasBranches: document.getElementById('f-branches').value,
-      branchCount: document.getElementById('f-branches').value === 'نعم'
-        ? (document.getElementById('f-branch-count').value || '') : '',
+      branchCount: String(branches.length),
+      branches:   branchData,
+      // حقول قديمة للتوافق مع الخادم الحالي (= بيانات الفرع الرئيسي)
+      mapUrl:      branchData[0].mapUrl,
+      repPhone:    branchData[0].repPhone,
+      hasBranches: branches.length > 1 ? 'نعم' : 'لا',
       files
     };
 
-    // Apps Script لا يدعم CORS، فنرسل بوضع no-cors (الرد لا يُقرأ، لكن البيانات تُحفظ)
-    await fetch(ENDPOINT, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(payload)
-    });
+    // نقرأ رد الخادم فعلياً — لا تظهر رسالة النجاح إلا إذا أكّد الخادم الحفظ
+    let res;
+    try {
+      res = await fetch(ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      });
+    } catch (netErr) {
+      throw new Error('تعذّر التأكد من وصول الطلب بسبب الاتصال. تأكد من الإنترنت واضغط "إرسال الطلب" مرة أخرى — لن يتكرر طلبك.');
+    }
+    let out = null;
+    try { out = await res.json(); } catch (x) {}
+    if (!out || !out.ok) {
+      const details = out && out.errors ? '\n\n• ' + Object.values(out.errors).join('\n• ') : '';
+      throw new Error((out && out.message ? out.message : 'لم يتم حفظ الطلب.') + details + '\n\nيرجى المراجعة والمحاولة مرة أخرى.');
+    }
 
     loading.style.display = 'none';
     document.getElementById('main-form').style.display = 'none';
